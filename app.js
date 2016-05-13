@@ -4,12 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var constants = require('./values/constants');
+var expressSession = require('express-session');
+var mongoStore = require("connect-mongo")(expressSession);
 
-
-// Configuring Passport
 var passport = require('passport');
 
-var expressSession = require('express-session');
 
 
 //database configuration
@@ -33,9 +33,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //use expresssession
 app.use(expressSession({
-    secret: 'myKey',
-    resave: false,
-    saveUninitialized: true
+    secret: '1c8607ad-4484-493b-85b2-bb5949051e38',
+    resave: false,  //don't save session if unmodified
+    saveUninitialized: false,	// don't create session until something stored
+    duration: 30 * 60 * 1000,
+    activeDuration: 5 * 60 * 1000,
+    store: new mongoStore({
+        url: constants.url
+    })
 }));
 app.use(passport.initialize());
 app.use(passport.session());

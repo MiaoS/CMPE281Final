@@ -85,7 +85,8 @@ log.e = function () {
 };
 
 log.req = function (req) {
-    var user = req.session.passport ? req.session.passport.user : req.session.user;
+    // var user = req.session.passport ? req.session.passport.user : req.session.user;
+    var user = req.user;
     var args = [req.method, ' ', req.url, ', user = ', user, ', body = ', req.body, ', params = ', req.params, ', headers = ', req.headers, ', passport = ', req.session.passport];
     log.http.apply(this, addFileAndLineInfo(args));
 };

@@ -4,7 +4,6 @@ var mongo = require('../util/mongodb');
 var log = require('../util/log');
 var CONSTANTS = require('../values/constants');
 var util = require('../util/util');
-var auth = require('../util/auth');
 var ERROR = require('../values/error');
 
 
@@ -25,7 +24,7 @@ router.handlePostSchedule = function (form) {
                 schedule[attr] = form[attr];
             }
         }
-        schedule.samplingInterval = Math.max(5, form.samplingInterval);
+        schedule.samplingInterval = Math.max(5, form.samplingInterval || 0);
         log.v('post schedule, schedule = ', schedule);
         return mongo.put(schedule, CONSTANTS.SCHEDULE);
     }).then(function (result) {
@@ -35,7 +34,7 @@ router.handlePostSchedule = function (form) {
     });
 };
 
-router.post('/schedule', auth.nextOrRedirect, function (req, res, next) {
+router.post('/schedule', function (req, res, next) {
     log.req(req);
 
     router.handlePostSchedule(req.body).then(function () {

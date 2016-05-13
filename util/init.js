@@ -3,8 +3,9 @@ var Promise = require('bluebird');
 var assert = require('chai').assert;
 var log = require('../util/log');
 var mongo = require('../util/mongodb');
-var util = require('util');
+var util = require('../util/util');
 var CONST = require('../values/constants');
+
 var rp = require('request-promise');
 var customer;
 var farmer;
@@ -43,7 +44,9 @@ function doInit() {
         return rp({
             uri: 'http://localhost:3000/signin',
             method: 'post',
-            json: json
+            json: json,
+            followAllRedirects: true,
+            jar: true
         }).then(function (body) {
             log.v(body);
             return body;
@@ -59,8 +62,9 @@ function doInit() {
         }).then(function (body) {
             log.v(body);
             assertProperties(body, json);
-            return body;
+            return util.objectify(body);
         }).catch(function (err) {
+            log.e(err.stack);
             // assert(err.statusCode == 302);
         });
     };
@@ -82,7 +86,7 @@ function doInit() {
     }
 
     begin().then(function () {
-        log.v('mongo = ', mongo);
+        rp = rp.defaults({jar: true});
         return mongo.getDB();
     }).then(function (db) {
         db.dropDatabaseAsync();
@@ -102,6 +106,15 @@ function doInit() {
         return post('/sensor/all', {name: 'sjsu', lat: '37.359989', lng: '-121.926968', stationId: 'id1'});
     }).then(function () {
         return post('/sensor/all', {name: 'unknown', lat: '37.302725', lng: '-121.909313', stationId: 'id2'});
+    }).then(function (sensor) {
+        return rp({
+            uri: 'http://localhost:3000/sensor/registered',
+            method: 'post',
+            json: {sid: sensor._id.toString(), status: 'true'}
+        }).then(function (body) {
+            log.v(body);
+            return body;
+        })
     }).catch(function (err) {
         if (err && err.stack) {
             log.e('err = ', err.stack);
