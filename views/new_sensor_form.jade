@@ -1,0 +1,24 @@
+block new_sensor
+form(role='form')
+    .form-group
+        h3.help-block
+            | Add a new sensor
+    .form-group
+        label(for='sensor_name')
+            | Name
+        input#sensor_name.form-control(type='text' )
+    .form-group
+        label(for='sensor_lat')
+            | Latitude
+        input#sensor_lat.form-control(type='text' required)
+
+    .form-group
+        label(for='sensor_lng')
+            | Longtitude
+        input#sensor_lng.form-control(type='text' required)
+
+    .form-group
+        label(for='sensor_station_id')
+            | station_id
+        input#sensor_station_id.form-control(type='text' required)
+

@@ -1,0 +1,26 @@
+block register_sensor_form
+form(role='form')
+    .form-group
+        h3#register_title.help-block
+            | Register sensor
+    .form-group
+        label(for='register_interval')
+            | Sampling interval
+        input#register_interval.form-control(type='number' placeholder='sceonds')
+    .form-group
+        label(for='register_alias')
+            | Alias
+        input#register_alias.form-control(type='text')
+    .form-group
+        label(for='register_group')
+            | Group
+        select#register_group.form-control
+            option(value='one') One
+            option(value='two') Two
+            option(value='three') Three
+            option(value='four') Four
+            option(value='five') Five
+    .checkbox
+        label
+            input#register_status(type='checkbox', value='true')
+            | status on

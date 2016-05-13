@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signin</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<form class="divForm" action="signin" method="post" align="center" >
+    <h2> Log In</h2>
+    <% if (message) { %>
+    <div class="alert alert-danger" style="color: red"><%= message %></div>
+    <% } %>
+    <div style="padding: 10px">
+        <div > <label style="text-shadow: 1px 1px 1px gray;">Username </label>
+            <input  class="signinInput" name="username" type="text"  placeholder="Username">
+        </div>
+        <p>
+
+        </p>
+
+        <div ><label style="text-shadow: 1px 1px 1px gray;">PassWord </label>
+            <input  class="signinInput" name ="password" type="password"  placeholder="Password" >
+        </div>
+    </div>
+    <p>
+
+    </p>
+
+    <div style="padding: 30px">
+        <input class="buttonCollor" name="signin" type="submit" value="Sign in">
+        <input class="buttonCollor"  name="cancel" type="reset" value="Cancel">
+    </div>
+
+    <p style="padding: 10px">Need an account? <a href="./signup">Signup</a></p>
+
+</form>
+
+
+
+</body>
+</html>

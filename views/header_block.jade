@@ -1,0 +1,113 @@
+block header
+    nav.navbar.navbar-default(role='navigation')
+        .navbar-header
+            button.navbar-toggle(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+                span.sr-only Toggle navigation
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            a.navbar-brand(href='/') Sensor Cloud
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse
+            ul.nav.navbar-nav
+            ul.nav.navbar-nav.navbar-right
+                li
+                    form.navbar-form.navbar-left(role='search')
+                        .form-group(style="visibility:hidden;")
+                            input#search_text.form-control(type='text' placeholder='Search #test')
+                            button.btn.btn-default(type='submit' ng-click='search();')
+                                | search
+                if userName
+                    li.dropdown(role='presentation')
+                        a.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')
+                            | #{userName}
+                            span.caret
+                        ul.dropdown-menu
+                            li
+                                a(href='/' + userName) Profile
+                            li
+                                a(href='/sign_out') Sign Out
+                unless userName
+                    li
+                        a(href='/sign_up') Sign Up
+                unless userName
+                    li
+                        a(href='/sign_in') Sign In
+                if userName
+                    li
+                        p.navbar-btn(style="visibility:hidden;")
+                            a#tweet_new.btn.btn-primary(data-target='#tweet_dialog', role='button', data-toggle='modal' ng-click='newTweet();') Tweet
+                            #tweet_dialog.modal.fade(role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                                .modal-dialog
+                                    .modal-content
+                                        .modal-header
+                                            button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                                                | ×
+                                            h4#new_tweet_title.modal-title Compose new Tweet
+                                        .modal-body
+                                            .form-group
+                                                textarea#tweet_text.form-control(rows='5')
+                                            .form-group
+                                                p#tweet_ref_text
+                                                input#tweet_ref_id(type='hidden' ng-model='tweet_ref_id')
+                                        .modal-footer
+                                            button.btn.btn-default(type='button', data-dismiss='modal')
+                                                | Cancel
+                                            button#tweet_send.btn.btn-primary(type='button' ng-click='postTweet();')
+                                                | Post
+    script.
+
+        function getResource($scope, $http, url, cb) {
+            log('getResource(), url = ', url);
+            $http({
+                method: "get",
+                url: url
+            }).success(function (data) {
+                log('data = ', data);
+                cb(data);
+            }).error(function (error) {
+                log('error = ', error);
+                $scope.infos = null;
+                $scope.errors = ['Request failed. Please try again.'];
+            });
+        }
+
+        function handleResource($scope, $http, method, url, data, cb) {
+            log('handleResource(), url = ', url, ', method = ', method);
+            var req = {
+                method: method,
+                url: url
+            };
+            if (data) {
+                req.data = data;
+            }
+            $http(req).success(function (data) {
+                log('data = ', data);
+                cb(data);
+            }).error(function (error) {
+                log('error = ', error);
+                $scope.infos = null;
+                $scope.errors = ['Request failed. Please try again.'];
+            });
+        };
+
+        function search() {
+            var text = $('#search_text').val();
+            var url = '/tag/' + encodeURIComponent(text);
+            log('text = ', text, ', url = ', url);
+            window.location.replace(url);
+        };
+
+        function retweet(tweet) {
+            log('retweet, tweet = ', tweet);
+            $('#new_tweet_title').html('Retweet');
+            $('#tweet_ref_text').html(tweet.text);
+            $('#tweet_ref_id').val(tweet.id);
+        }
+
+        function newTweet() {
+            log('new tweet');
+            $('#new_tweet_title').html('Compose new tweet');
+            $('#tweet_ref_text').html('');
+            $('#tweet_ref_id').val('');
+        }
+

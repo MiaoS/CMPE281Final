@@ -1,0 +1,66 @@
+extends layout
+
+block head
+    script(src='/javascripts/sensor.js')
+
+block error
+    include error_block
+
+block header
+    include header_block
+
+block content
+    .row
+        .col-md-12
+            br
+            br
+    .row
+        //.col-md-3
+            .row
+                .col-md-2
+                .col-md-9
+                    img.img-thumbnail(alt='Bootstrap Image Preview', src='#{avatar}')
+                    h3
+                        | #{fullName}
+                    h6.text-muted
+                        | @#{userName}
+                    h6
+                        | Joined December 2016
+        .col-md-12
+            #panel-528.tab-pane.active
+                include sensor_list
+    .col-md-2
+
+    script.
+        $(document).ready(function () {
+            getAllSensors();
+            $('#panel_title').text('All sensors in the system');
+            addControlButton(BTN_ADD_SENSOR);
+        });
+
+        controllerFunction = function ($scope, $http) {
+            var userName = !{JSON.stringify(userName)};
+            getResource($scope, $http, '/sensor/all', function (data) {
+                $scope.sensors = data;
+            });
+            //
+            //function postTweet($scope, $http) {
+            //    var text = $('#tweet_text').val();
+            //    var retweetText = $('#tweet_ref_text').html();
+            //    var data = {text: text, retweetText: retweetText};
+            //    log('data = ', data);
+            //    var userName =
+            !{JSON.stringify(userName)};
+            //    handleResource($scope, $http, 'post', '/' + userName + '/tweet', data, function (data) {
+            //        $('#tweet_dialog').modal('hide');
+            //        location.reload();
+            //    });
+            //};
+            //$scope.postTweet = function () {
+            //    postTweet($scope, $http);
+            //};
+            //$scope.newTweet = newTweet;
+            //$scope.retweet = retweet;
+            //$scope.search = search;
+
+        };

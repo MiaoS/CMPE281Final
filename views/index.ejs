@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<body id="welcomePage">
+<h1 id="welcomePageH1"> Welcome To WHWD</h1>
+<h6> Wave Height & Wave Direction</h6>
+<% if(!isAuthenticated){ %>
+<a href="/signin"> SignIn</a>
+<a href="/signup">SignUp</a>
+<% }else{ %>
+Hello, Welcome back, <%= user.username %>!
+<a href="/dashboard">Go to dashboard</a>
+<% } %>
+
+</body>
+</html>

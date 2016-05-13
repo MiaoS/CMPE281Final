@@ -1,0 +1,23 @@
+extends layout
+
+block head
+    style.
+        body {
+            background-image: url('/images/bg.jpg'); /*You will specify your image path here.*/
+            padding-top: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            -moz-background-size: cover;
+            -webkit-background-size: cover;
+            background-size: cover;
+            background-position: top center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed;
+        }
+
+block header
+    include header_block
+
+block content
+    .container
+        h1 Welcom to Sensor Cloud

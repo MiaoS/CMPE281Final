@@ -1,0 +1,48 @@
+body {
+  padding: 50px;
+  background-image: url("../images/background.jpg");
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+#welcomePage{
+  text-align: center;
+  padding: 150px;
+}
+#welcomePageH1{
+  color: #00B7FF;
+  font-size: 3em;
+  font-family: "Comic Sans MS";
+}
+h2{
+  text-shadow: 2px 2px 2px gray;
+}
+a {
+  color: blue;
+}
+.lable1{
+  color: red;
+}
+.divForm{
+  margin: 20px auto;
+  border: 1px solid deepskyblue;
+  width: 300px;
+  height: 300px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: rgba(0,191,255,0.5) 3px 3px 5px, inset rgba(0,191,255,0.5) 3px -3px 5px ;
+
+
+}
+.signupInput{
+  float: right;
+  margin-right: 20px;
+}
+
+.signinInput{
+  float: right;
+  margin-right: 20px;
+}
+.buttonCollor{
+  background-color:#00B7FF;
+}

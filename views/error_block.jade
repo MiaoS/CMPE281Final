@@ -1,0 +1,12 @@
+block error
+    .container(ng-if='errors')
+        p.text-warning
+        ul.list-group
+            li.list-group-item(ng-repeat='error in errors')
+                p.text-warning {{error}}
+    .container(ng-if='infos')
+        p.text-warning
+        ul.list-group
+            li.list-group-item(ng-repeat='info in infos')
+                p.text-info {{info}}
+
