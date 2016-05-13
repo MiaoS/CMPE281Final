@@ -34,6 +34,28 @@ router.handlePostSchedule = function (form) {
     });
 };
 
+router.handleDeleteSchedule = function (sid) {
+    log.v('post schedule, sid = ', sid);
+    return mongo.get(form.sid, CONSTANTS.SCHEDULE).spread(function (schedule) {
+        log.v('post schedule, get schedule = ', schedule);
+        if (!schedule) {
+            schedule = {key: form.sid};
+        }
+        for (var attr in form) {
+            if (attr !== '_id' || attr !== 'key') {
+                schedule[attr] = form[attr];
+            }
+        }
+        schedule.samplingInterval = Math.max(5, form.samplingInterval || 0);
+        log.v('post schedule, schedule = ', schedule);
+        return mongo.put(schedule, CONSTANTS.SCHEDULE);
+    }).then(function (result) {
+        if (result.status === 'true') {
+            sampling(result);
+        }
+    });
+};
+
 router.post('/schedule', function (req, res, next) {
     log.req(req);
 

@@ -15,7 +15,7 @@ function showSensorInfo(sensor) {
             $("#dialog_body").text('id: ' + sensor._id);
             $("#dialog_opr_btn").unbind().click(function (data) {
                 $.ajax({
-                    url: "/sensor/all/" + sensor._id,
+                    url: "/sensor/" + sensor._id,
                     type: 'DELETE',
                     success: function (data) {
                         refreshCurrentView();
@@ -29,14 +29,14 @@ function showSensorInfo(sensor) {
         case SENSOR_OPR_REGISTER:
             $('#register_title').text('ID: ' + sensor._id);
             $("#dialog_opr_btn").unbind().click(function (data) {
-                $.post("/sensor/registered", {
-                        sid: sensor._id,
-                        samplingInterval: $('#register_interval').val(),
-                        alias: $('#register_alias').val(),
-                        status: $('#register_status').val()
-                    }, function () {
-                        refreshCurrentView();
-                    })
+                $.post("/virtualSensor", {
+                    sid: sensor._id,
+                    samplingInterval: $('#register_interval').val(),
+                    alias: $('#register_alias').val(),
+                    status: $('#register_status').val()
+                }, function () {
+                    refreshCurrentView();
+                })
                     .done(function () {
                     })
                     .fail(function () {
@@ -51,7 +51,7 @@ function showSensorInfo(sensor) {
             $('#register_title').text('ID: ' + sensor._id);
             $("#dialog_opr_btn").unbind().click(function (data) {
                 $.ajax({
-                    url: "/sensor/registered/" + sensor._id,
+                    url: "/virtualSensor/" + sensor._id,
                     type: 'DELETE',
                     success: function (data) {
                         refreshCurrentView();
@@ -71,9 +71,9 @@ function showSensorInfo(sensor) {
                     stationId: $('#sensor_station_id').val()
                 };
                 log('new sensor, form = ', form);
-                $.post("/sensor/all/", form, function (data) {
-                        refreshCurrentView();
-                    })
+                $.post("/sensor/", form, function (data) {
+                    refreshCurrentView();
+                })
                     .done(function () {
                     })
                     .fail(function () {
@@ -138,7 +138,7 @@ function renderAvailable(data) {
     });
 }
 function getAvailableSensors() {
-    $.get("/sensor/available", function (data) {
+    $.get("/virtualSensor/available", function (data) {
         renderAvailable(data);
     });
 }
@@ -161,7 +161,7 @@ function renderRegisteredSensors(data) {
     // render new
     data.forEach(function (sensor) {
         var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(sensor.lat, sensor.lng),
+            position: new google.maps.LatLng(sensor.s.lat, sensor.s.lng),
             icon: REGISTERED_ICON,
             title: '' + sensor._id
         });
@@ -177,7 +177,7 @@ function renderRegisteredSensors(data) {
 }
 
 function getRegisteredSensors() {
-    $.get("/sensor/registered", function (data) {
+    $.get("/virtualSensor/my", function (data) {
         renderRegisteredSensors(data);
     });
 }
@@ -215,7 +215,7 @@ function renderAllSensor(data) {
 }
 
 function getAllSensors() {
-    $.get("/sensor/all", function (data) {
+    $.get("/sensor/", function (data) {
         renderAllSensor(data);
     });
 }
@@ -241,14 +241,22 @@ function addControlButton(type) {
         controlText.style.paddingLeft = '5px';
         controlText.style.paddingRight = '5px';
         controlUI.appendChild(controlText);
-        switch (type) {
-            case BTN_ADD_SENSOR:
-                showAddButton(controlUI, controlText);
-                break;
-            case BTN_SHOW_AVAILABLE:
-                showAvailableButton(controlUI, controlText);
-                break;
-        }
+        controlText.innerHTML = type;
+        controlUI.addEventListener('click', function () {
+            switch (controlText.innerHTML) {
+                case BTN_SHOW_AVAILABLE:
+                case BTN_HIDE_AVAILABLE:
+                    controlText.innerHTML = controlText.innerHTML === BTN_SHOW_AVAILABLE ?
+                        BTN_HIDE_AVAILABLE : BTN_SHOW_AVAILABLE;
+                    operationOption = controlText.innerHTML;
+                    refreshCurrentView();
+                    break;
+                case BTN_ADD_SENSOR:
+                    operationOption = controlText.innerHTML;
+                    showSensorInfo({operation: SENSOR_OPR_ADD});
+                    break;
+            }
+        });
     }
 
     var centerControlDiv = document.createElement('div');
@@ -257,21 +265,8 @@ function addControlButton(type) {
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
 }
 
-function showAvailableButton(controlUI, controlText) {
-    controlText.innerHTML = BTN_SHOW_AVAILABLE;
-    controlUI.addEventListener('click', function () {
-        if (controlText.innerHTML === BTN_SHOW_AVAILABLE) {
-            controlText.innerHTML = BTN_HIDE_AVAILABLE;
-        } else {
-            controlText.innerHTML = BTN_SHOW_AVAILABLE;
-
-        }
-        operationOption = controlText.innerHTML;
-        refreshCurrentView();
-    });
-}
-
 function refreshCurrentView() {
+    log('operationOption = ', operationOption);
     switch (operationOption) {
         case BTN_SHOW_AVAILABLE:
             renderAvailable([]);
@@ -285,12 +280,5 @@ function refreshCurrentView() {
             getAllSensors();
             break;
     }
-}
-
-function showAddButton(controlUI, controlText) {
-    controlText.innerHTML = BTN_ADD_SENSOR;
-    controlUI.addEventListener('click', function () {
-        showSensorInfo({operation: SENSOR_OPR_ADD});
-    });
 }
 var controllerFunction;

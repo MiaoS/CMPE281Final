@@ -126,35 +126,39 @@ function Mongo() {
         return db.collection(collection).find(key).toArrayAsync();
     }
 
-    this.get = function (key, collection, cb) {
-        if (cb) {
-            return init().then(function () {
-                return get(key, collection);
-            }).then(function (result) {
-                cb(null, result);
-            }, function (err) {
-                cb(err, undefined);
-            })
-        }
+    this.get = function (key, collection, refs) {
+        // if (cb) {
+        //     return init().then(function () {
+        //         return get(key, collection);
+        //     }).then(function (result) {
+        //         cb(null, result);
+        //     }, function (err) {
+        //         cb(err, undefined);
+        //     })
+        // }
         return init().then(function () {
+            if (refs) {
+                return getDetailed(key, collection, refs);
+            }
             return get(key, collection);
         })
     };
 
     this.remove = function (key, collection, cb) {
-        if (cb) {
-            return init().then(function () {
-                return remove(key, collection);
-            }).then(function (result) {
-                cb(null, result);
-            }, function (err) {
-                cb(err, undefined);
-            })
-        }
+        // if (cb) {
+        //     return init().then(function () {
+        //         return remove(key, collection);
+        //     }).then(function (result) {
+        //         cb(null, result);
+        //     }, function (err) {
+        //         cb(err, undefined);
+        //     })
+        // }
         return init().then(function () {
             return remove(key, collection);
         })
     };
+
     function remove(key, collection) {
         if (typeof collection === 'undefined') {
             collection = CONST.DEFAULT_COLLECTION;
@@ -197,12 +201,13 @@ function Mongo() {
         }
     }
 
-    this.getDetailed = function (key, collection) {
+    function getDetailed(key, collection, refs) {
+        log.v('key = ', key, ', collection = ', collection, ', refs = ', refs);
         var inflatedObjects = [];
         return mongo.get(key, collection).then(function (objects) {
             return Promise.each(objects, function (object) {
                 log.v('inflate object = ', object);
-                return mongo.inflate(object).then(function (inflatedObject) {
+                return mongo.inflate(object, refs).then(function (inflatedObject) {
                     log.v('inflated object = ', inflatedObject);
                     inflatedObjects.push(inflatedObject);
                 });
@@ -210,9 +215,11 @@ function Mongo() {
         }).then(function () {
             return inflatedObjects;
         });
-    };
+    }
 
-    this.inflate = function (object) {
+    this.getDetailed = getDetailed;
+
+    this.inflate = function (object, refs) {
         var copy = {};
         return Promise.each(_.keys(object), function (attr) {
             // log.v('attr = ', attr);
@@ -220,18 +227,18 @@ function Mongo() {
                 log.v('inflate, skip, fun');
                 return;
             }
+            copy[attr] = object[attr];
             if (mongo.objectId(object[attr])
-                && attr.endsWith('ID')
+                && attr.toLowerCase().endsWith('id')
                 && object[attr].toString() !== object._id.toString()) {
                 var resName = attr.toLowerCase().endsWith('id') ? attr.substring(0, attr.length - 'id'.length) : attr;
                 log.v('resName = ', resName);
-                return mongo.get(object[attr], resName).spread(function (res) {
+                return mongo.get(object[attr], (refs && refs[attr]) || resName).spread(function (res) {
                     log.v('inflate, resName = ', resName, ', res = ', res);
-                    copy[resName] = res;
+                    if (res) {
+                        copy[resName] = res;
+                    }
                 })
-            } else {
-                // log.v('inflate, resName = ', resName);
-                copy[attr] = object[attr];
             }
         }).then(function () {
             log.v('inflate, copy = ', copy);

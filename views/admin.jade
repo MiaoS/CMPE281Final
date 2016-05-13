@@ -40,7 +40,7 @@ block content
 
         controllerFunction = function ($scope, $http) {
             var userName = !{JSON.stringify(userName)};
-            getResource($scope, $http, '/sensor/all', function (data) {
+            getResource($scope, $http, '/sensor/', function (data) {
                 $scope.sensors = data;
             });
             //
