@@ -1,4 +1,4 @@
-body {
+#welcomePage {
   padding: 50px;
   background-image: url("../images/background.jpg");
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -45,4 +45,8 @@ a {
 }
 .buttonCollor{
   background-color:#00B7FF;
+}
+.compass {
+  background:url(http://vignette3.wikia.nocookie.net/ideas/images/9/92/Compass.png/revision/latest?cb=20131114231038);
+  background-size: 100% 100%;
 }

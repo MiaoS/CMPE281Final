@@ -53,6 +53,10 @@ module.exports = function (passport) {
     router.get('/setting', isAuthenticated, function (req, res) {
         res.render('setting', {user: req.user});
     });
+    /* GET setting Page */
+    router.get('/report', isAuthenticated, function (req, res) {
+        res.render('report.jade', {user: req.user});
+    });
     /* GET help Page */
     router.get('/help', isAuthenticated, function (req, res) {
         res.render('help', {user: req.user});

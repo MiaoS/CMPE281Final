@@ -1,8 +1,9 @@
 extends layout
 
 block head
-    //script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAYyOb3EpgM9TA_Pmp2lkWhECQZ1kbgUAM&callback=initMap', async='', defer='')
     script(src='/javascripts/sensor.js')
+    script(src='/javascripts/Chart.js')
+    script(src='/javascripts/dataDisplay.js')
 
 block error
     include error_block
@@ -15,7 +16,7 @@ block content
         .row
             include sidebar
             .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-                h1.page-header Dashboard
+                h1.page-header Report
                 //.row.placeholders
                     .col-xs-6.col-sm-3.placeholder
                         img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
@@ -34,22 +35,42 @@ block content
                         h4 Label
                         span.text-muted Something else
                 //h2.sub-header Section title
-                #panel-528.tab-pane.active
-                        include sensor_list
+                div(style='float:left;')
+                    table
+                        tr(style='float:left;')
+                            td(style='font-size:110%;')
+                                b Current Wave Height and Direction: 
+                            td#cur_height(style='font-size:120%;')
+                            td#cur_direction(style='padding-right:0; font-size:120%;')
+                        tr
+                            td(style='font-size:110%;')
+                                b  Location: 
+                                span#latitude(style='font-size:110%;') 37.76, 
+                                span#longitude(style='padding-right:0; font-size:110%;') -122.53
+                div(style='float:left;')
+                    canvas#compass.compass(width='60', height='60')
+                div(style='width:100%; float:left;')
+                    div(style='text-align:center;')
+                        | Wave Height (m)
+                        canvas#chart(height='300', width='600')
+                    |            Display data:
+                    form
+                        input#hourly(type='radio', name='time', onclick='selectTime();', value='hourly', checked='')
+                        |  Hourly  
+                        input#daily(type='radio', name='time', onclick='selectTime();', value='daily')
+                        |  Daily  
+                        input#monthly(type='radio', name='time', onclick='selectTime();', value='Monthly')
+                        |                Monthly
+
 
     script.
         $(document).ready(function () {
             $('.modal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
-            getRegisteredSensors();
-            $('#panel_title').text('Manage sensors');
-            addControlButton(BTN_SHOW_AVAILABLE);
+
         });
 
         controllerFunction = function ($scope, $http) {
-            //var userName = !{JSON.stringify(userName)};
-            //getResource($scope, $http, '/sensor/all', function (data) {
-            //    $scope.sensors = data;
-            //});
+
         };
