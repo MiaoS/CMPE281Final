@@ -94,7 +94,7 @@ function fetchSensorData(stationId) {
         uri: url,
         method: 'get',
     }).then(function (body) {
-        log.v('fetchSensorData, body = ', body);
+        // log.v('fetchSensorData, body = ', body);
         return parse(body);
     }).then(function (result) {
         log.v('fetchSensorData, result.length = ', result.length);
@@ -128,6 +128,7 @@ function takeASample(vs) {
     }).then(function (data) {
         data.sid = vs.sid;
         data.vsid = vs._id.toString();
+        data.create = Date.now();
         return mongo.put(data, CONSTANTS.DATA);
     }).catch(function (err) {
         log.e(err);

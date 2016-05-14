@@ -1,4 +1,5 @@
 var log = require('npmlog');
+var util = require('./util');
 
 log.level = 'silly';
 log.enableColor();
@@ -42,7 +43,7 @@ function addFileAndLineInfo(args) {
     copy.push('<' + __full_file + ':' + __line + '>');
     for (var i = 0; i < copy.length; ++i) {
         if (typeof copy[i] === typeof {}) {
-            copy[i] = JSON.stringify(copy[i]);
+            copy[i] = util.stringify(copy[i]);
         }
     }
     return copy;

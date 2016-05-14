@@ -38,6 +38,10 @@ window.onload = function () {
 
 
 function showChart() {
+    if (myLineChart){
+        myLineChart.destroy();
+    }
+
     var ctx = document.getElementById("chart").getContext("2d");
     myLineChart = new Chart(ctx).Line(lineChartData, {
         responsive: true
@@ -80,36 +84,39 @@ function showCompass(direction) {
     }
 }
 
+function getVsid() {
+    const res = '/report/vsid/';
+    var index = window.location.href.indexOf(res);
+    if (index < 0) {
+        return;
+    }
+    var vsid = window.location.href.substr(index + res.length);
+    log('vsid = ', vsid);
+    return vsid;
+}
+
+function updateDataWith(url) {
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (request.readyState == 4 && request.status == 200) {
+            var data = objectify(request.responseText);
+            lineChartData.labels = _.pluck(data, 'date_time');
+            lineChartData.datasets[0].data = _.pluck(data, 'sea_surface_wave_significant_height (m)');
+            // log('data = ', data);
+            log('labels = ', lineChartData.labels, ', data = ', lineChartData.datasets[0].data);
+            showChart();
+        }
+    };
+
+    request.open("GET", url, true);
+    request.send();
+}
 
 function selectTime() {
 
     if (document.getElementById('monthly').checked) {
 
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState == 4 && request.status == 200) {
-                var data = JSON.parse(request.responseText);
-            }
-        };
-        request.open("GET", "/data/hourly.json", true);
-        request.send();
-
-        myLineChart.destroy();
-        lineChartData.labels = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."];
-        lineChartData.datasets[0].data = [
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor(),
-            randomScalingFactor()];
-        showChart();
+        updateDataWith("/data/vsid/" + getVsid());
 
     } else if (document.getElementById('daily').checked) {
 
@@ -127,10 +134,7 @@ function selectTime() {
         lineChartData.datasets[0].data = [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()];
         showChart();
     } else if (document.getElementById('hourly').checked) {
-        myLineChart.destroy();
-        lineChartData.labels = ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
-        lineChartData.datasets[0].data = [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()];
-        showChart();
+        updateDataWith("/data/vsid/" + getVsid());
     }
 
 }

@@ -12,13 +12,17 @@ var router = express.Router();
 
 router.get('/', function (req, res, next) {
     return mongo.get({}, CONSTANTS.DATA).then(function (data) {
-        ERROR.ok(res, sensors);
+        ERROR.ok(res, data);
     })
 });
-router.get('/:sid', function (req, res, next) {
-    return mongo.get(req.params.sid, CONSTANTS.SENSOR).spread(function (sensor) {
-        ERROR.ok(res, sensor);
-    })
+
+router.get('/vsid/:vsid', function (req, res, next) {
+    log.req(req);
+    return mongo.get({vsid: req.params.vsid}, CONSTANTS.DATA).then(function (data) {
+        ERROR.ok(res, data);
+    }).catch(function (err) {
+        ERROR.badRequest(err);
+    });
 });
 
 router.post('/', function (req, res, next) {
@@ -48,7 +52,6 @@ router.delete('/:sid', function (req, res, next) {
         ERROR.badRequest(res, err);
     });
 });
-
 
 
 module.exports = router;

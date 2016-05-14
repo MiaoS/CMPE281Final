@@ -1,6 +1,7 @@
 {
   "ignore": [
     "views/*",
+    "public/*",
     "values/*.json"
   ]
 }

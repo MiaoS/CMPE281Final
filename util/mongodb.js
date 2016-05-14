@@ -202,7 +202,7 @@ function Mongo() {
     }
 
     function getDetailed(key, collection, refs) {
-        log.v('key = ', key, ', collection = ', collection, ', refs = ', refs);
+        // log.v('key = ', key, ', collection = ', collection, ', refs = ', refs);
         var inflatedObjects = [];
         return mongo.get(key, collection).then(function (objects) {
             return Promise.each(objects, function (object) {
@@ -232,16 +232,16 @@ function Mongo() {
                 && attr.toLowerCase().endsWith('id')
                 && object[attr].toString() !== object._id.toString()) {
                 var resName = attr.toLowerCase().endsWith('id') ? attr.substring(0, attr.length - 'id'.length) : attr;
-                log.v('resName = ', resName);
+                // log.v('resName = ', resName);
                 return mongo.get(object[attr], (refs && refs[attr]) || resName).spread(function (res) {
-                    log.v('inflate, resName = ', resName, ', res = ', res);
+                    // log.v('inflate, resName = ', resName, ', res = ', res);
                     if (res) {
                         copy[resName] = res;
                     }
                 })
             }
         }).then(function () {
-            log.v('inflate, copy = ', copy);
+            // log.v('inflate, copy = ', copy);
             return copy;
         });
     };

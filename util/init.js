@@ -90,7 +90,7 @@ function doInit() {
     var assertProperties = function (body, json) {
         body = util.objectify(body);
         for (var attr in json) {
-            log.v('body[' + attr + '] = ', body[attr], ', json[' + attr + '] = ', json[attr]);
+            // log.v('body[' + attr + '] = ', body[attr], ', json[' + attr + '] = ', json[attr]);
             assert(body[attr] === json[attr]);
         }
     };

@@ -245,9 +245,19 @@ var util = {
             return strOrObj;
         }
         return JSON.parse(strOrObj);
+    }, stringify: function (obj) {
+        var cache = [];
+        var result = JSON.stringify(obj, function (key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    return;
+                }
+                cache.push(value);
+            }
+            return value;
+        });
+        return result;
     }
 };
 
-
 module.exports = util;
-module.exports.log = true;
