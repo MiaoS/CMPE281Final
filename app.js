@@ -56,6 +56,7 @@ auth.init(passport);
 app.use('/', require('./routes/index')(passport));
 app.use('/admin', require('./routes/admin')(passport));
 app.use('/sensor', require('./routes/sensor'));
+app.use('/data', require('./routes/data'));
 app.use('/user', require('./routes/user'));
 app.use('/virtualSensor', require('./routes/virtual-sensor'));
 app.use('/collector', require('./routes/collector'));

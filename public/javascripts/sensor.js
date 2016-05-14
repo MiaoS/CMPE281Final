@@ -1,5 +1,5 @@
-var AVAILABLE_ICON = '/images/bell.png';
-var REGISTERED_ICON = '/images/adjust-brightness.png';
+var AVAILABLE_ICON = '/images/location-outline.png';
+var REGISTERED_ICON = '/images/location.png';
 var SENSOR_OPR_ADD = 'add';
 var SENSOR_OPR_REMOVE = 'remove';
 var SENSOR_OPR_REGISTER = 'register';
@@ -36,14 +36,14 @@ function showSensorInfo(sensor) {
                     status: $('#register_status').val()
                 }, function () {
                     refreshCurrentView();
-                })
+                    })
                     .done(function () {
                     })
                     .fail(function () {
                         vex.dialog.alert('Register failed!');
                     })
                     .always(function () {
-                    });
+            });
             });
             showRegisterWindow();
             break;
