@@ -1,4 +1,5 @@
 var express = require('express');
+var Promise = require('bluebird');
 var router = express.Router();
 var mongo = require('../util/mongodb');
 var log = require('../util/log');
@@ -6,65 +7,33 @@ var CONSTANTS = require('../values/constants');
 var util = require('../util/util');
 var ERROR = require('../values/error');
 
-
+var schedules = {};
 router.get('/', function (req, res, next) {
     log.req(req);
     res.send('');
 });
 
-router.handlePostSchedule = function (form) {
-    log.v('post schedule, form = ', form);
-    return mongo.get(form.sid, CONSTANTS.SCHEDULE).spread(function (schedule) {
-        log.v('post schedule, get schedule = ', schedule);
-        if (!schedule) {
-            schedule = {key: form.sid};
-        }
-        for (var attr in form) {
-            if (attr !== '_id' || attr !== 'key') {
-                schedule[attr] = form[attr];
-            }
-        }
-        schedule.samplingInterval = Math.max(5, form.samplingInterval || 0);
-        log.v('post schedule, schedule = ', schedule);
-        return mongo.put(schedule, CONSTANTS.SCHEDULE);
-    }).then(function (result) {
-        if (result.status === 'true') {
-            sampling(result);
-        }
-    });
-};
-
-router.handleDeleteSchedule = function (sid) {
-    log.v('post schedule, sid = ', sid);
-    return mongo.get(form.sid, CONSTANTS.SCHEDULE).spread(function (schedule) {
-        log.v('post schedule, get schedule = ', schedule);
-        if (!schedule) {
-            schedule = {key: form.sid};
-        }
-        for (var attr in form) {
-            if (attr !== '_id' || attr !== 'key') {
-                schedule[attr] = form[attr];
-            }
-        }
-        schedule.samplingInterval = Math.max(5, form.samplingInterval || 0);
-        log.v('post schedule, schedule = ', schedule);
-        return mongo.put(schedule, CONSTANTS.SCHEDULE);
-    }).then(function (result) {
-        if (result.status === 'true') {
-            sampling(result);
-        }
-    });
-};
-
-router.post('/schedule', function (req, res, next) {
+router.post('/schedule/:vsid', function (req, res, next) {
     log.req(req);
-
-    router.handlePostSchedule(req.body).then(function () {
-        ERROR.ok(res, '');
+    mongo.get(req.params.vsid, CONSTANTS.VIRTUAL_SENSOR, {sid: CONSTANTS.SENSOR}).spread(function (vs) {
+        log.v('* schedule, vs = ', vs);
+        if (vs.status == 'true') {
+            startSampling(vs);
+        } else {
+            stopSampling(vs);
+        }
+    }).then(function () {
+        ERROR.ok(res, ERROR.OK);
     }).catch(function (err) {
         log.e(err);
         ERROR.badRequest(res, ERROR.FAILED_ADD_SCHEDULE);
     });
+});
+
+router.delete('/schedule/:vsid', function (req, res, next) {
+    log.req(req);
+    stopSampling(req.params.vsid);
+    ERROR.ok(res, ERROR.OK);
 });
 
 router.post('/startAllSchedule', function (req, res, next) {
@@ -78,29 +47,37 @@ router.post('/startAllSchedule', function (req, res, next) {
     });
 });
 
-function sampling(schedule) {
-    log.i('sampling schedule, schedule = ', schedule);
-    setInterval(function () {
-        execute(schedule);
-    }, schedule.samplingInterval * 1000);
+function startSampling(vs) {
+    log.i('sampling, vs = ', vs);
+    stopSampling(vs);
+    schedules[vs._id.toString()] = setInterval(function () {
+        takeASample(vs);
+    }, vs.samplingInterval * 1000);
 }
-router.sampling = sampling;
 
-function execute(schedule) {
-    log.v('execute, schedule = ', schedule);
-    mongo.get(schedule.sid, CONSTANTS.SENSOR).then(function (sensor) {
+function stopSampling(vs) {
+    if (util.isString(vs)) {
+        vs = {_id: vs};
+    }
+    if (schedules[vs._id.toString()]) {
+        log.i('stopSampling, vs = ', vs);
+        clearInterval(schedules[vs._id.toString()]);
+    }
+}
+
+function takeASample(vs) {
+    log.v('takeASample, vs = ', vs);
+    Promise.bind({}).then(function () {
         var data = {
             temp: Math.floor(40 + Math.random() * 40),
             unit: 'f',
-            lat: sensor.lat,
-            lng: sensor.lng,
+            lat: vs.s.lat,
+            lng: vs.s.lng,
             collectedTime: Date.now()
         };
-        return mongo.put(data, schedule.sid);
+        return mongo.put(data, vs._id.toString());
     }).then(function (result) {
-
     }).catch(function (err) {
-
     });
 }
 

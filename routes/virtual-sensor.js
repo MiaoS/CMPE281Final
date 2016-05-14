@@ -10,14 +10,6 @@ var CONSTANTS = require('../values/constants');
 var rp = require('request-promise');
 var router = express.Router();
 
-function getUserObject(req) {
-    log.req(req);
-    return mongo.get({key: req.user._id.toString()}, CONSTANTS.CONFIG).spread(function (result) {
-        log.i('getUserObject(), result = ', result);
-        return result ? result : mongo.put({key: req.user._id.toString()}, CONSTANTS.CONFIG);
-    });
-}
-
 router.get('/', function (req, res, next) {
     log.req(req);
     return mongo.get(req.query || {}, CONSTANTS.VIRTUAL_SENSOR, {sid: CONSTANTS.SENSOR}).then(function (sensors) {
@@ -58,21 +50,24 @@ router.get('/:sid', function (req, res, next) {
 
 router.post('/', function (req, res, next) {
     log.req(req);
-    var sensor = req.body;
     return mongo.get({
-        sid: sensor.sid,
+        sid: req.body.sid,
         uid: req.user._id.toString()
-    }, CONSTANTS.VIRTUAL_SENSOR).bind({}).spread(function (result) {
-        if (result) {
-            log.i('post sensor, duplicated item, sensor = ', sensor);
-            throw ERROR.DUP_SENSOR;
+    }, CONSTANTS.VIRTUAL_SENSOR).bind({}).spread(function (vs) {
+        if (!vs) {
+            log.v('+ vs');
+            vs = util.copy(req.body);
+            vs.uid = req.user._id.toString();
         }
-        sensor.uid = req.user._id.toString();
-        return mongo.put(sensor, CONSTANTS.VIRTUAL_SENSOR);
+        vs.samplingInterval = Math.max(CONSTANTS.MIN_SAMPLING_INTERVAL, vs.samplingInterval || 0);
+        log.v('* vs, vs = ', vs);
+        return mongo.put(vs, CONSTANTS.VIRTUAL_SENSOR);
     }).then(function (result) {
-        this.sensor = result;
-        log.i('post sensor, insert sensor, result = ', result);
-        return ERROR.ok(res, this.sensor);
+        this.vs = result;
+        log.i('* vs, insert sensor, result = ', result);
+        return ERROR.ok(res, this.vs);
+    }).then(function () {
+        return updateSchedule(this.vs._id.toString());
     }).catch(function (err) {
         ERROR.badRequest(res, err);
     });
@@ -82,9 +77,25 @@ router.delete('/:vsid', function (req, res, next) {
     log.req(req);
     return mongo.remove(req.params.vsid, CONSTANTS.VIRTUAL_SENSOR).then(function () {
         return ERROR.ok(res, ERROR.OK);
+    }).then(function () {
+        return removeSchedule(req.params.vsid);
     }).catch(function (err) {
         ERROR.badRequest(res, err);
     });
 });
 
+function updateSchedule(vsid) {
+    rp({
+        uri: 'http://localhost:3000' + '/collector/schedule/' + vsid,
+        method: 'POST',
+    }).then(function (body) {
+    });
+}
+function removeSchedule(vsid) {
+    rp({
+        uri: 'http://localhost:3000' + '/collector/schedule/' + vsid,
+        method: 'delete',
+    }).then(function () {
+    });
+}
 module.exports = router;

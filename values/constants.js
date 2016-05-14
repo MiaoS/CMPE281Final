@@ -12,7 +12,10 @@ var CONSTANTS = {
     SENSOR: 'sensor',
     VIRTUAL_SENSOR: 'virtual_sensor',
     SCHEDULE: 'schedule',
-    DATA: 'data'
+    DATA: 'data',
+
+
+    MIN_SAMPLING_INTERVAL:10,
 };
 
 module.exports = CONSTANTS;

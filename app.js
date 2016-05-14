@@ -11,7 +11,6 @@ var mongoStore = require("connect-mongo")(expressSession);
 var passport = require('passport');
 
 
-
 //database configuration
 var CONST = require('./values/constants');
 var mongoose = require('mongoose');
@@ -58,7 +57,7 @@ app.use('/', require('./routes/index')(passport));
 app.use('/admin', require('./routes/admin')(passport));
 app.use('/sensor', require('./routes/sensor'));
 app.use('/user', require('./routes/user'));
-app.use('/virtualSensor', require('./routes/virtualSensor'));
+app.use('/virtualSensor', require('./routes/virtual-sensor'));
 app.use('/collector', require('./routes/collector'));
 
 
