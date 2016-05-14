@@ -13,6 +13,8 @@ var driver;
 var admin;
 var currentProduct;
 
+var fs = require('fs');
+var _ = require('underscore');
 
 function init() {
     if (process.env.NODE_DO_INIT || true) {
@@ -42,8 +44,6 @@ function doInit() {
         return getUser();
     }).then(function (user) {
         this.user = user;
-        return startAllSchedule();
-
     }).then(function () {
         return post('/sensor/', {name: 'sjsu', lat: '37.359989', lng: '-121.926968', stationId: 'id1'});
     }).then(function (sensor) {
@@ -54,13 +54,13 @@ function doInit() {
     }).then(function () {
         return removeSensor(this.sensor._id.toString());
 
-    }).then(function () {
-        return post('/sensor/', {name: 'sjsu', lat: '37.359989', lng: '-121.926968', stationId: 'stationId1'});
-    }).then(function (sensor) {
-        this.sensor = sensor;
-        return post('/sensor/', {name: 'sj airport', lat: '37.364026', lng: '-121.928815', stationId: 'stationId2'});
-    }).then(function (sensor) {
-        return post('/sensor/', {name: 'unknow', lat: '37.390061', lng: '-121.883720', stationId: 'stationId3'});
+        // }).then(function () {
+        //     return post('/sensor', {name: 'sjsu', lat: '37.359989', lng: '-121.926968', stationId: 'stationId1'});
+        // }).then(function (sensor) {
+        //     this.sensor = sensor;
+        //     return post('/sensor', {name: 'sj airport', lat: '37.364026', lng: '-121.928815', stationId: 'stationId2'});
+        // }).then(function (sensor) {
+        //     return post('/sensor', {name: 'unknow', lat: '37.390061', lng: '-121.883720', stationId: 'stationId3'});
 
     }).then(function () {
         return post('/virtualSensor/', {sid: this.sensor._id.toString(), status: 'true'});
@@ -75,29 +75,10 @@ function doInit() {
         return getUserAvailableVirtualSensors();
     }).then(function () {
         return removeVirtualSensor(this.vs._id.toString());
-
     }).then(function () {
-        return post('/virtualSensor/', {sid: this.sensor._id.toString(), status: 'true'});
-        // }).then(function () {
-        //     return post('/sensor/all', {name: 'unknown', lat: '37.302725', lng: '-121.909313', stationId: 'id2'});
-        // }).then(function (sensor) {
-        //     this.sensor = sensor;
-        //     return rp({
-        //         uri: 'http://localhost:3000/sensor/registered',
-        //         method: 'post',
-        //         json: {sid: sensor._id.toString(), status: 'true'}
-        //     }).then(function (body) {
-        //         assert(body.registeredIds.length);
-        //         return body;
-        //     })
-        // }).then(function (sensor) {
-        //     return rp({
-        //         uri: 'http://localhost:3000/sensor/registered/' + this.sensor._id,
-        //         method: 'delete',
-        //     }).then(function (body) {
-        //         assert(!body.registeredIds.length);
-        //         return body;
-        //     })
+        // return post('/virtualSensor/', {sid: this.sensor._id.toString(), status: 'true'});
+    }).then(function () {
+        importSensors();
     }).catch(function (err) {
         if (err && err.stack) {
             log.e('err = ', err.stack);
@@ -275,6 +256,28 @@ function doInit() {
         return Promise.bind({});
     }
 
+
+    function importSensors() {
+        var stationList = require('../values/station-list.json');
+        log.v('stations.length = ', stationList.stations.length);
+        return Promise.each(stationList.stations, function (stationId) {
+            return rp({
+                uri: 'http://localhost:' + CONST.PORT_COLLECTOR + '/collector/station/' + stationId,
+                method: 'get',
+            }).then(function (data) {
+                log.v('importSensors, data = ', data);
+                data = util.objectify(data);
+                if (data) {
+                    return post('/sensor', {stationId: data.stationId, lat: data.lat, lng: data.lng});
+                } else {
+                    stationList.stations = _.without(stationList.stations, stationId);
+                    fs.writeFileSync('./values/station-list.json', JSON.stringify(stationList));
+                }
+            })
+        }).catch(function (err) {
+            log.e(err.stack);
+        });
+    }
 }
 
 module.exports = init;

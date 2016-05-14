@@ -4,7 +4,6 @@ var log = require('../util/log');
 var ERROR = require('../values/error');
 var util = require('../util/util');
 var auth = require('../util/auth');
-var collector = require('../routes/collector');
 var _ = require('underscore');
 var CONSTANTS = require('../values/constants');
 var rp = require('request-promise');
@@ -86,14 +85,14 @@ router.delete('/:vsid', function (req, res, next) {
 
 function updateSchedule(vsid) {
     rp({
-        uri: 'http://localhost:3000' + '/collector/schedule/' + vsid,
+        uri: 'http://localhost:' + CONSTANTS.PORT_COLLECTOR + '/collector/schedule/' + vsid,
         method: 'POST',
     }).then(function (body) {
     });
 }
 function removeSchedule(vsid) {
     rp({
-        uri: 'http://localhost:3000' + '/collector/schedule/' + vsid,
+        uri: 'http://localhost:' + CONSTANTS.PORT_COLLECTOR + '/collector/schedule/' + vsid,
         method: 'delete',
     }).then(function () {
     });

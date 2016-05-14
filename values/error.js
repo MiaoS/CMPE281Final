@@ -50,7 +50,13 @@ ERROR.systemError = function (res, err) {
 
 ERROR.badRequest = function (res, err) {
     res.status(400);
-    res.send(err.msg);
+    if (err.msg) {
+        res.send(err.msg);
+    } else if (err.message) {
+        res.send(err.message);
+    } else {
+        res.send(err);
+    }
 };
 
 ERROR.ok = function (res, result) {

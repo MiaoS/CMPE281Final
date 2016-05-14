@@ -6,7 +6,7 @@ var util = {
     fixedLengthObject: function (callbackLength, cb) {
         var arr = {};
         var length = 0;
-        if (callbackLength == 0){
+        if (callbackLength == 0) {
             process.nextTick(cb);
         }
         arr.put = function (key, value) {
@@ -238,6 +238,9 @@ var util = {
         return properties;
     },
     objectify: function (strOrObj) {
+        if (!strOrObj) {
+            return strOrObj;
+        }
         if (util.isObject(strOrObj)) {
             return strOrObj;
         }
