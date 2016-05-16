@@ -14,25 +14,7 @@ block sensor_list
                     #map_view.tab-pane.fade.in.active
                         include map
                         button#show_dialog.btn.btn-info.btn-lg(style="visibility:hidden;" type='button', data-toggle='modal', data-target='#myModal') Open Modal
-                            // Modal
-                        #myModal.modal.fade(role='dialog')
-                            .modal-dialog
-                                // Modal content
-                                .modal-content
-                                    .modal-header
-                                        button.close(type='button', data-dismiss='modal') ×
-                                        h4#dialog_title.modal-title Sensor Information
-                                    .modal-body
-                                        #sensor_info
-                                            p#dialog_body Some text in the modal.
-                                        #register_sensor
-                                            include register_sensor_form
-                                        #new_sensor
-                                            include new_sensor_form
-                                    .modal-footer
-                                        button#dialog_opr_btn.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")
-                                        button#dialog_opr_btn2.btn.btn-primary(type='button', data-dismiss='modal')
-                                        button.btn.btn-default(type='button', data-dismiss='modal') Close
+                        include sensor_form
 
                     #list_view.tab-pane.fade
                         table.table
@@ -43,17 +25,18 @@ block sensor_list
                                     th lng
                                     th opr
                             tbody
-                                tr( ng-repeat='item in sensors')
-                                    td
-                                        p {{item._id}}
-                                    td
-                                        p {{item.lat}}
-                                    td
-                                        p {{item.lng}}
-                                    td
-                                        form(method="post", action="/all/delete")
-                                            input(type='hidden', name='id', value='{{item.id}}')
-                                            input.btn.btn-success(type='submit', value='Delete')
+                                #sensor_item( ng-repeat='item in sensors')
+                                    tr
+                                        td
+                                            p {{item._id.toString()}}
+                                        td
+                                            p {{item.lat||item.s.lat}}
+                                        td
+                                            p {{item.lng||item.s.lng}}
+                                        td
+                                            form(method="post", action="/sensor/delete")
+                                                input(type='hidden', name='id', value='{{item._id}}')
+                                                input.btn.btn-success(type='submit', value='Delete')
 
     script.
         $("#switch_view").click(function () {

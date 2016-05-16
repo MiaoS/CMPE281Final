@@ -195,6 +195,10 @@ function renderRegisteredSensors(data) {
 
 function getRegisteredSensors() {
     $.get("/virtualSensor/my", function (data) {
+        var $scope = angular.element("#list_view").scope();
+        $scope.$apply(function () {
+            $scope.sensors = data;
+        });
         renderRegisteredSensors(data);
     });
 }
@@ -232,7 +236,11 @@ function renderAllSensor(data) {
 }
 
 function getAllSensors() {
-    $.get("/sensor/", function (data) {
+    $.get("/sensor", function (data) {
+        var $scope = angular.element("#list_view").scope();
+        $scope.$apply(function () {
+            $scope.sensors = data;
+        });
         renderAllSensor(data);
     });
 }

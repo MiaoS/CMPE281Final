@@ -17,7 +17,7 @@ var fs = require('fs');
 var _ = require('underscore');
 
 function init() {
-    if (process.env.NODE_DO_INIT || true) {
+    if (process.env.NODE_DO_INIT) {
         doInit();
     }
 }

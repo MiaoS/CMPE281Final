@@ -1,6 +1,7 @@
 block sensor_form
-#sensor_form.modal.fade(role='dialog')
+#myModal.modal.fade(role='dialog')
     .modal-dialog
+        // Modal content
         .modal-content
             .modal-header
                 button.close(type='button', data-dismiss='modal') ×
@@ -8,28 +9,11 @@ block sensor_form
             .modal-body
                 #sensor_info
                     p#dialog_body Some text in the modal.
-                form(role='form')
-                    .form-group
-                        h3.help-block
-                            | Add a new sensor
-                    .form-group
-                        label(for='sensor_name')
-                            | Name
-                        input#sensor_name.form-control(type='text' )
-                    .form-group
-                        label(for='sensor_lat')
-                            | Latitude
-                        input#sensor_lat.form-control(type='text' required)
-
-                    .form-group
-                        label(for='sensor_lng')
-                            | Longtitude
-                        input#sensor_lng.form-control(type='text' required)
-
-                    .form-group
-                        label(for='sensor_station_id')
-                            | station_id
-                        input#sensor_station_id.form-control(type='text' required)
+                #register_sensor
+                    include register_sensor_form
+                #new_sensor
+                    include new_sensor_form
             .modal-footer
-                button#dialog_opr_btn.btn.btn-primary(type='button', data-dismiss='modal')
+                button#dialog_opr_btn.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")
+                button#dialog_opr_btn2.btn.btn-primary(type='button', data-dismiss='modal')
                 button.btn.btn-default(type='button', data-dismiss='modal') Close
