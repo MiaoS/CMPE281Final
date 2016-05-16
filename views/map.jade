@@ -7,6 +7,9 @@ block map
                 center: {lat: 37.337600, lng: -121.880585},
                 zoom: 7
             });
+            if (global.initSensor) {
+                global.initSensor();
+            }
         }
 
     script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAYyOb3EpgM9TA_Pmp2lkWhECQZ1kbgUAM&callback=initMap', async='', defer='')

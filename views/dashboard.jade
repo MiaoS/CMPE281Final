@@ -11,6 +11,25 @@ block header
     include nav
 
 block content
+    script.
+        $(document).ready(function () {
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+            $('#panel_title').text('Manage sensors');
+        });
+
+        global.initSensor = function () {
+            getRegisteredSensors();
+            addControlButton(BTN_SHOW_AVAILABLE);
+        }
+        controllerFunction = function ($scope, $http) {
+            //var userName =
+            !{JSON.stringify(userName)};
+            //getResource($scope, $http, '/sensor/all', function (data) {
+            //    $scope.sensors = data;
+            //});
+        };
     .container-fluid
         .row
             include sidebar
@@ -35,21 +54,6 @@ block content
                         span.text-muted Something else
                 //h2.sub-header Section title
                 #panel-528.tab-pane.active
-                        include sensor_list
+                    include sensor_list
 
-    script.
-        $(document).ready(function () {
-            $('.modal').on('hidden.bs.modal', function () {
-                $(this).find('form')[0].reset();
-            });
-            getRegisteredSensors();
-            $('#panel_title').text('Manage sensors');
-            addControlButton(BTN_SHOW_AVAILABLE);
-        });
 
-        controllerFunction = function ($scope, $http) {
-            //var userName = !{JSON.stringify(userName)};
-            //getResource($scope, $http, '/sensor/all', function (data) {
-            //    $scope.sensors = data;
-            //});
-        };
