@@ -12,12 +12,12 @@ var rp = require('request-promise');
 
 var schedules = {};
 router.get('/', function (req, res, next) {
-    log.req(req);
+    // log.req(req);
     res.send('');
 });
 
 router.post('/schedule/:vsid', function (req, res, next) {
-    log.req(req);
+    // log.req(req);
     mongo.get(req.params.vsid, CONSTANTS.VIRTUAL_SENSOR, {sid: CONSTANTS.SENSOR}).spread(function (vs) {
         log.v('* schedule, vs = ', vs);
         if (vs.status == 'true') {
@@ -34,13 +34,13 @@ router.post('/schedule/:vsid', function (req, res, next) {
 });
 
 router.delete('/schedule/:vsid', function (req, res, next) {
-    log.req(req);
+    // log.req(req);
     stopSampling(req.params.vsid);
     ERROR.ok(res, ERROR.OK);
 });
 
 router.post('/startAllSchedule', function (req, res, next) {
-    log.req(req);
+    // log.req(req);
     return mongo.get({status: 'true'}, CONSTANTS.SCHEDULE).then(function (schedules) {
         schedules.forEach(function (schedule) {
             startSampling(schedule);
@@ -51,7 +51,7 @@ router.post('/startAllSchedule', function (req, res, next) {
 });
 
 router.get('/station/:stationId', function (req, res, next) {
-    log.req(req);
+    // log.req(req);
     fetchSensorData(req.params.stationId).then(function (data) {
         return ERROR.ok(res, data);
     }).catch(function (err) {
@@ -60,11 +60,11 @@ router.get('/station/:stationId', function (req, res, next) {
 });
 
 function startSampling(vs) {
-    log.i('sampling, vs = ', vs);
+    // log.i('sampling, vs = ', vs);
     stopSampling(vs);
     schedules[vs._id.toString()] = setInterval(function () {
         takeASample(vs);
-    }, vs.samplingInterval * 1000);
+    }, vs.samplingInterval * 60* 1000);
 }
 
 function stopSampling(vs) {
@@ -89,7 +89,7 @@ function fetchSensorData(stationId) {
         observedProperty: 'waves',
         responseformat: 'text/csv',
     });
-    log.v('fetchSensorData, url = ', url);
+    // log.v('fetchSensorData, url = ', url);
     return rp({
         uri: url,
         method: 'get',
@@ -97,7 +97,7 @@ function fetchSensorData(stationId) {
         // log.v('fetchSensorData, body = ', body);
         return parse(body);
     }).then(function (result) {
-        log.v('fetchSensorData, result.length = ', result.length);
+        // log.v('fetchSensorData, result.length = ', result.length);
         if (result.length < 2) {
             return;
         }
@@ -122,18 +122,27 @@ function fetchSensorData(stationId) {
 
 
 function takeASample(vs) {
-    log.v('takeASample, vs = ', vs);
+    // log.v('takeASample, vs = ', vs);
     Promise.bind({}).then(function () {
         return fetchSensorData(vs.s.stationId);
     }).then(function (data) {
         data.sid = vs.sid;
         data.vsid = vs._id.toString();
         data.create = Date.now();
+        updateVSHealth(vs, 'alive');
         return mongo.put(data, CONSTANTS.DATA);
     }).catch(function (err) {
-        log.e(err);
+        updateVSHealth(vs, 'dead');
+        // log.e(err);
     });
 }
 
+function updateVSHealth(vs, health) {
+    mongo.get(vs._id, CONSTANTS.VIRTUAL_SENSOR).spread(function (vs) {
+        vs.health = health;
+        return mongo.put(vs, CONSTANTS.VIRTUAL_SENSOR);
+    }).then(function (vs) {
 
+    })
+}
 module.exports = router;

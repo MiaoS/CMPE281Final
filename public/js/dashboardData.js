@@ -1,4 +1,4 @@
-var currentHeight, currentDirection;
+var currentHeight, currentDirection, sensorId, latitude, longitude;
 
 var myLineChart;
 
@@ -24,17 +24,74 @@ var lineChartData = {
 
 window.onload = function () {
 
-    currentHeight = Math.round(Math.random() * 50)
-    document.getElementById("cur_height").innerHTML = currentHeight + " m, ";
+    getData();
 
-    currentDirection = Math.round(Math.random() * 180)
-    document.getElementById("cur_direction").innerHTML = currentDirection + "\xB0";
+    setUpLabel();
+    setUpData();
 
     showCompass(currentDirection);
     showChart();
-    selectTime();
 
 }
+
+function getData() {
+
+    // ** Change data here **
+    sensorId = "4d974h28lskjfw89";
+
+    // ** Change data here **
+    latitude = 37.76;
+    longitude = -122.53;
+
+    // ** Change data here **
+    currentHeight = Math.round(Math.random() * 50);
+    // ** Change data here **
+    currentDirection = Math.round(Math.random() * 180);
+
+}
+
+function setUpLabel() {
+
+    // lineChartData.labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
+
+    var d = new Date();
+    var h = d.getHours();
+
+    var n = h - 11;
+
+    if (n <= 0) {
+        n = n + 24;
+    }
+
+    for (i=0; i<12; i++) {
+
+        if (n >= 24) {
+            n = 0;
+        }
+
+        lineChartData.labels.push(n + ":00");
+        n++;
+
+    }
+
+}
+
+
+function setUpData() {
+
+    document.getElementById("sensorId").innerHTML = sensorId;
+
+    document.getElementById("latitude").innerHTML = latitude + ", ";
+    document.getElementById("longitude").innerHTML = longitude;
+
+    document.getElementById("cur_height").innerHTML = currentHeight + " m, ";
+    document.getElementById("cur_direction").innerHTML = currentDirection + "\xB0 from North";
+
+    // Change data here
+    lineChartData.datasets[0].data = [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()];
+
+}
+
 
 
 function showChart() {
@@ -69,7 +126,7 @@ function showCompass(direction) {
         ctx.rotate(angle * Math.PI / 180);
         ctx.translate(-r, -r);
         ctx.beginPath();
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.moveTo(r, r);
         ctx.lineTo(r, 0);
         ctx.lineTo(r * 0.95, r / 5);
@@ -84,45 +141,6 @@ function showCompass(direction) {
     }
 }
 
-function getVsid() {
-    const res = '/report/vsid/';
-    var index = window.location.href.indexOf(res);
-    if (index < 0) {
-        return;
-    }
-    var vsid = window.location.href.substr(index + res.length);
-    log('vsid = ', vsid);
-    return vsid;
-}
-
-function updateDataWith(url) {
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (request.readyState == 4 && request.status == 200) {
-            var data = objectify(request.responseText);
-            lineChartData.labels = _.pluck(data, 'date_time');
-            lineChartData.datasets[0].data = _.pluck(data, 'sea_surface_wave_significant_height (m)');
-            // log('data = ', data);
-            log('labels = ', lineChartData.labels, ', data = ', lineChartData.datasets[0].data);
-            showChart();
-        }
-    };
-
-    request.open("GET", url, true);
-    request.send();
-}
-
-function selectTime() {
-
-    if (document.getElementById('monthly').checked) {
-        updateDataWith("/data/vsid/" + getVsid());
-    } else if (document.getElementById('daily').checked) {
-        updateDataWith("/data/vsid/" + getVsid());
-    } else if (document.getElementById('hourly').checked) {
-        updateDataWith("/data/vsid/" + getVsid());
-    }
-
-}
 
 
 

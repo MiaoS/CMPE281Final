@@ -1,0 +1,57 @@
+extends layout
+
+block head
+    script(src='/javascripts/sensor.js')
+    script.
+        $(document).ready(function () {
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+            $('#panel_title').text('All sensors in the system');
+        });
+
+        global.initSensor = function () {
+            getAllSensors();
+            addControlButton(BTN_ADD_SENSOR);
+        }
+
+        controllerFunction = function ($scope, $http) {
+            $scope.showSensor = function (sid) {
+                window.showSensor(sid);
+            }
+        };
+block error
+    include error_block
+
+block header
+    include nav
+
+block content
+
+    .container-fluid
+        .row
+            include sidebar
+            .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+                h1.page-header Dashboard
+                .row.placeholders
+                    .col-xs-6.col-sm-3.placeholder
+                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                        h4 Label
+                        span.text-muted Something else
+                    .col-xs-6.col-sm-3.placeholder
+                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                        h4 Label
+                        span.text-muted Something else
+                    .col-xs-6.col-sm-3.placeholder
+                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                        h4 Label
+                        span.text-muted Something else
+                    .col-xs-6.col-sm-3.placeholder
+                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
+                        h4 Label
+                        span.text-muted Something else
+                //h2.sub-header Section title
+                #panel-528.tab-pane.active
+                    include sensor_list
+
+

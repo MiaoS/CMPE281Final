@@ -15,6 +15,11 @@ block head
             getRegisteredSensors();
         });
 
+        global.initSensor = function () {
+            getMyGroups();
+            getRegisteredSensors();
+            //addControlButton(BTN_SHOW_AVAILABLE);
+        }
         controllerFunction = function ($scope, $http) {
             $scope.showSensor = function (sid) {
                 window.showSensor(sid);
@@ -31,8 +36,8 @@ block content
         .row
             include sidebar
             .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-                h1.page-header Dashboard
-                .row.placeholders
+                h1.page-header Billing
+                //.row.placeholders
                     .col-md-12.col-xs-12.col-sm-12(style='text-align:left;')
                         h3
                             | Sensor:
@@ -52,31 +57,34 @@ block content
                         div(style='margin-top:20px;')
                             canvas#compass.compass(width='150', height='150')
                 //h3.sub-header My Sensors
-                //#list_view.tab-pane.fade
-                    table.table
-                        thead
-                            tr
-                                th id
-                                th name
-                                th status
-                                th health
-                                th lat
-                                th lng
-                                //th opr
-                        tbody
-                            tr( ng-repeat='sensor in sensors')
-                                td
-                                    p {{sensor._id}}
-                                td
-                                    p {{sensor.name}}
-                                td
-                                    p {{sensor.status == "true"?"on":"off"}}
-                                td
-                                    p {{sensor.health?sensor.health:"good"}}
-                                td
-                                    p {{sensor.lat||sensor.s.lat}}
-                                td
-                                    p {{sensor.lng||sensor.s.lng}}
-                                //td
-                                    input.btn.btn-success(type='submit', value='Modify', ng-click='showSensor(sensor._id);')
+                    #list_view.tab-pane.fade
+                        table.table
+                            thead
+                                tr
+                                    th id
+                                    th name
+                                    th status
+                                    th health
+                                    th lat
+                                    th lng
+                                    //th opr
+                            tbody
+                                tr(ng-if="sensors")
+                                    td
+                                        p 'No sensors registered'
+                                tr( ng-repeat='sensor in sensors')
+                                    td
+                                        p {{sensor._id}}
+                                    td
+                                        p {{sensor.name}}
+                                    td
+                                        p {{sensor.status == "true"?"on":"off"}}
+                                    td
+                                        p {{sensor.health?sensor.health:"good"}}
+                                    td
+                                        p {{sensor.lat||sensor.s.lat}}
+                                    td
+                                        p {{sensor.lng||sensor.s.lng}}
+                                    //td
+                                        input.btn.btn-success(type='submit', value='Modify', ng-click='showSensor(sensor._id);')
 

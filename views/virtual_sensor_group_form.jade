@@ -1,0 +1,30 @@
+block virtual_sensor_group_form
+#virtual_sensor_group_form.modal.fade(role='dialog')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                button.close(type='button', data-dismiss='modal') ×
+                h4#dialog_title.modal-title Sensor Group
+            .modal-body
+                form(role='form')
+                    .form-group
+                        h3#vsg_id_field.help-block
+                            | Group Information
+                    .form-group
+                        label(for='vsg_name')
+                            | Name
+                        input#vsg_name.form-control(type='text')
+                    .form-group
+                        label(for='vsg_interval')
+                            | Data Collector
+                            | Interval(min)
+                        input#vsg_interval.form-control(type='number' placeholder='minutes' min=30)
+                    .checkbox
+                        label
+                            input#vsg_status(type='checkbox')
+                            | status on
+            .modal-footer
+                button#vsg_opr_left.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")
+                //button#vsg_opr_middle.btn.btn-primary(type='button', data-dismiss='modal')
+                button#vsg_opr_right.btn.btn-primary(type='button', data-dismiss='modal')
+                button.btn.btn-default(type='button', data-dismiss='modal') Close

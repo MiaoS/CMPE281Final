@@ -1,0 +1,35 @@
+block virtual_sensor_form
+#virtual_sensor_form.modal.fade(role='dialog')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                button.close(type='button', data-dismiss='modal') ×
+                h4#dialog_title.modal-title Sensor Information
+            .modal-body
+                form(role='form')
+                    .form-group
+                        h3#vs_id_field.help-block
+                            | Register sensor
+                    .form-group
+                        label(for='vs_name')
+                            | Name
+                        input#vs_name.form-control(type='text')
+                    .form-group
+                        label(for='vs_group')
+                            | Group
+                        select#vs_group.form-control(onchange='onChangeGroup();return false;')
+                            option(value='')
+                            option(ng-repeat='group in groups' value='{{group._id}}') {{group.name}}
+                    .form-group
+                        label(for='vs_interval')
+                            | Sampling interval
+                        input#vs_interval.form-control(type='number' placeholder='minutes' min=30)
+                    .checkbox
+                        label
+                            input#vs_status(type='checkbox')
+                            | status on
+            .modal-footer
+                button#vs_opr_left.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")
+                button#vs_opr_middle.btn.btn-primary(type='button', data-dismiss='modal')
+                button#vs_opr_right.btn.btn-primary(type='button', data-dismiss='modal')
+                button.btn.btn-default(type='button', data-dismiss='modal') Close

@@ -1,16 +1,14 @@
-block sensor_form
-#sensor_form.modal.fade(role='dialog')
+block physical_sensor_form
+#physical_sensor_form.modal.fade(role='dialog')
     .modal-dialog
         .modal-content
             .modal-header
                 button.close(type='button', data-dismiss='modal') ×
                 h4#dialog_title.modal-title Sensor Information
             .modal-body
-                #sensor_info
-                    p#dialog_body Some text in the modal.
                 form(role='form')
                     .form-group
-                        h3.help-block
+                        h3#sensor_id_field.help-block
                             | Add a new sensor
                     .form-group
                         label(for='sensor_name')
@@ -31,5 +29,6 @@ block sensor_form
                             | station_id
                         input#sensor_station_id.form-control(type='text' required)
             .modal-footer
-                button#dialog_opr_btn.btn.btn-primary(type='button', data-dismiss='modal')
+                button#sensor_opr_left.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")
+                button#sensor_opr_right.btn.btn-primary(type='button', data-dismiss='modal')
                 button.btn.btn-default(type='button', data-dismiss='modal') Close

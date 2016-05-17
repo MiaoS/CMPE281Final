@@ -46,7 +46,7 @@ module.exports = function (passport) {
 
     /* GET Home Page */
     router.get('/dashboard', isAuthenticated, function (req, res) {
-        res.render('dashboard_admin.jade', {user: req.user});
+        res.render('manage-sensor.jade', {user: req.user});
     });
 
     /* GET setting Page */

@@ -15,6 +15,7 @@ var CONSTANTS = {
     POOL: 'pool',
     SENSOR: 'sensor',
     VIRTUAL_SENSOR: 'virtual_sensor',
+    VIRTUAL_SENSOR_GROUP: 'virtual_sensor_group',
     SCHEDULE: 'schedule',
     DATA: 'data',
 
