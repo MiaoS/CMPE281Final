@@ -57,8 +57,10 @@ router.post('/', function (req, res, next) {
             log.v('+ vs');
             vs = util.copy(req.body);
             vs.uid = req.user._id.toString();
+        } else {
+            util.setProperties(vs, req.body);
         }
-        vs.samplingInterval = Math.max(CONSTANTS.MIN_SAMPLING_INTERVAL, vs.samplingInterval || 0);
+        vs.samplingInterval = Math.max(CONSTANTS.MIN_SAMPLING_INTERVAL, vs.samplingInterval || 10);
         log.v('* vs, vs = ', vs);
         return mongo.put(vs, CONSTANTS.VIRTUAL_SENSOR);
     }).then(function (result) {

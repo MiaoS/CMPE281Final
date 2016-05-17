@@ -25,7 +25,7 @@ router.post('/', function (req, res, next) {
     log.req(req);
     var sensor = req.body;
     return mongo.get({lat: sensor.lat, lng: sensor.lng}, CONSTANTS.SENSOR).bind({}).spread(function (result) {
-        if (result) {
+        if (!sensor._id && result) {
             log.i('post sensor, duplicated item, sensor = ', sensor);
             throw ERROR.DUP_SENSOR;
         }
@@ -48,7 +48,6 @@ router.delete('/:sid', function (req, res, next) {
         ERROR.badRequest(res, err);
     });
 });
-
 
 
 module.exports = router;

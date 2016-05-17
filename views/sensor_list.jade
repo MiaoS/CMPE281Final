@@ -2,10 +2,11 @@ block sensor_list
     .panel.panel-default
         .panel-heading
             h3#panel_title.panel-title
-                | My sensors{{test}}
+                | My sensors
         .panel-body
             .col-md-12
-                include sensor_form
+                include physical_sensor_form
+                include virtual_sensor_form
                 ul.nav.nav-tabs
                     li.active
                         a#show_map(data-toggle='tab', href='#map_view') Map view

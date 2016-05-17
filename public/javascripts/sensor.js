@@ -1,129 +1,157 @@
 var AVAILABLE_ICON = '/images/location-outline.png';
 var REGISTERED_ICON = '/images/location.png';
-var SENSOR_OPR_ADD = 'add';
-var SENSOR_OPR_REMOVE = 'remove';
-var SENSOR_OPR_REGISTER = 'register';
-var SENSOR_OPR_UNREGISTER = 'unregister';
+var SENSOR_OPR_ADD = 'Add';
+var SENSOR_OPR_REMOVE = 'Remove';
+var SENSOR_OPR_REGISTER = 'Register';
+var SENSOR_OPR_UNREGISTER = 'Unregister';
 var BTN_SHOW_AVAILABLE = 'Show Available';
 var BTN_HIDE_AVAILABLE = 'Hide Available';
 var BTN_ADD_SENSOR = 'Add New';
-var operationOption = BTN_SHOW_AVAILABLE;
-function showSensorInfo(sensor) {
+var operationOption;
+
+function doUpdateSensor(sensor) {
+    var form = {
+        name: $('#sensor_name').val(),
+        lat: $('#sensor_lat').val(),
+        lng: $('#sensor_lng').val(),
+        stationId: $('#sensor_station_id').val()
+    };
+    if (sensor) {
+        form._id = sensor._id;
+    }
+    $.post("/sensor", form, function (data) {
+        refreshCurrentView();
+    }).done(function () {
+    }).fail(function () {
+        vex.dialog.alert('Add failed! Sensor exists.');
+    }).always(function () {
+    });
+}
+
+function addPhysicalSensor(sensor) {
+    $("#sensor_id_field").text('Add Sensor');
+    $("#sensor_opr_left").unbind().click(doUpdateSensor);
+    $("#sensor_opr_right").hide();
+}
+
+function removePhysicalSensor(sensor) {
+    $("#sensor_id_field").text('id: ' + sensor._id);
+    $("#sensor_opr_left").unbind().click(function (data) {
+        $.ajax({
+            url: "/sensor/" + sensor._id,
+            type: 'DELETE',
+            success: function (data) {
+                refreshCurrentView();
+            }
+        }).fail(function () {
+            vex.dialog.alert('Remove failed!');
+        });
+    });
+    $('#sensor_name').text('ID: ' + sensor._id);
+    $('#sensor_name').val(sensor.name);
+    $('#sensor_lat').val(sensor.lat);
+    $('#sensor_lng').val(sensor.lng);
+    $('#sensor_station_id').val(sensor.stationId);
+
+    $("#sensor_opr_right").show();
+    $("#sensor_opr_right").text('Update');
+    $("#sensor_opr_right").unbind().click(function () {
+        doUpdateSensor(sensor);
+    });
+}
+
+function updateVirtualSensor(sensor) {
+    var vs = {
+        sid: sensor.sid || sensor._id,
+        samplingInterval: $('#vs_interval').val(),
+        alias: $('#vs_alias').val(),
+        status: $('#vs_status').prop('checked'),
+        group: $('#vs_group').val()
+    };
+    $.post("/virtualSensor", vs, function () {
+        refreshCurrentView();
+    }).done(function () {
+    }).fail(function () {
+        vex.dialog.alert('Register failed!');
+    }).always(function () {
+    });
+}
+
+function registerVirtualSensor(sensor) {
+    $("#vs_id_field").text('Register Sensor');
+    $("#vs_opr_left").unbind().click(function () {
+        updateVirtualSensor(sensor);
+    });
+    $("#vs_opr_middle").hide();
+    $("#vs_opr_right").hide();
+}
+
+function unregisterVirtualSensor(sensor) {
+    $("#vs_id_field").text('ID: ' + sensor._id);
+    $("#vs_opr_left").unbind().click(function (data) {
+        $.ajax({
+            url: "/virtualSensor/" + sensor._id,
+            type: 'DELETE',
+            success: function (data) {
+                refreshCurrentView();
+            }
+        }).fail(function () {
+            vex.dialog.alert('Unregister failed!');
+        });
+    });
+
+    $("#vs_opr_middle").show();
+    $("#vs_opr_middle").text('Update');
+    $("#vs_opr_middle").unbind().click(function (data) {
+        updateVirtualSensor(sensor);
+    });
+
+    $("#vs_opr_right").show();
+    $("#vs_opr_right").text('Details');
+    $("#vs_opr_right").unbind().click(function (data) {
+        window.location.href = "/report/vsid/" + sensor._id;
+    });
+}
+
+function showSensorForm(sensor) {
+    log('sensor.operation = ', sensor.operation);
     switch (sensor.operation) {
         case SENSOR_OPR_ADD:
-            $("#dialog_opr_btn").unbind().click(function () {
-                var form = {
-                    name: $('#sensor_name').val(),
-                    lat: $('#sensor_lat').val(),
-                    lng: $('#sensor_lng').val(),
-                    stationId: $('#sensor_station_id').val()
-                };
-                log('new sensor, form = ', form);
-                $.post("/sensor/", form, function (data) {
-                    refreshCurrentView();
-                })
-                    .done(function () {
-                    })
-                    .fail(function () {
-                        vex.dialog.alert('Add failed! Sensor exists.');
-                    })
-                    .always(function () {
-                    });
-            });
-            showWindow();
-            break;
         case SENSOR_OPR_REMOVE:
-            $("#dialog_body").text('id: ' + sensor._id);
-            $("#dialog_opr_btn").unbind().click(function (data) {
-                $.ajax({
-                    url: "/sensor/" + sensor._id,
-                    type: 'DELETE',
-                    success: function (data) {
-                        refreshCurrentView();
-                    }
-                }).fail(function () {
-                    vex.dialog.alert('Remove failed!');
-                });
-            });
-            showWindow();
-            break;
-        case SENSOR_OPR_REGISTER:
-        case SENSOR_OPR_UNREGISTER:
-            log('sensor.samplingInterval = ', sensor.samplingInterval, ', alias = ', sensor.alias,
-                ', group = ', sensor.group, ', status = ', sensor.status);
-            $('#register_title').text('ID: ' + sensor._id);
-            $('#register_interval').val(sensor.samplingInterval || 10);
-            $('#register_alias').val(sensor.alias);
-            $('#register_group').val(sensor.group).change();
-            $('#register_status').prop('checked', sensor.status);
-
-            if (sensor.operation == SENSOR_OPR_REGISTER) {
-                $("#dialog_opr_btn").unbind().click(function (data) {
-                    var sensorInfo = {
-                        sid: sensor._id,
-                        samplingInterval: $('#register_interval').val(),
-                        alias: $('#register_alias').val(),
-                        status: $('#register_status').prop('checked'),
-                        group: $('#register_group').val()
-                    };
-                    $.post("/virtualSensor", sensorInfo, function () {
-                        refreshCurrentView();
-                    }).done(function () {
-                    }).fail(function () {
-                        vex.dialog.alert('Register failed!');
-                    }).always(function () {
-                    });
-                });
-                $("#dialog_opr_btn2").hide();
+            if (sensor.operation == SENSOR_OPR_ADD) {
+                addPhysicalSensor(sensor);
             } else {
-                $("#dialog_opr_btn").unbind().click(function (data) {
-                    $.ajax({
-                        url: "/virtualSensor/" + sensor._id,
-                        type: 'DELETE',
-                        success: function (data) {
-                            refreshCurrentView();
-                        }
-                    }).fail(function () {
-                        vex.dialog.alert('Unregister failed!');
-                    });
-                });
-                $("#dialog_opr_btn2").show();
-                $("#dialog_opr_btn2").text('Details');
-                $("#dialog_opr_btn2").unbind().click(function (data) {
-                    window.location.href = "/report/vsid/" + sensor._id;
-                });
+                removePhysicalSensor(sensor);
             }
 
-            showWindow();
+
+            $("#sensor_opr_left").text(sensor.operation);
+            $('#physical_sensor_form').modal("show");
+            break;
+
+        case SENSOR_OPR_REGISTER:
+        case SENSOR_OPR_UNREGISTER:
+
+            log('sensor.samplingInterval = ', sensor.samplingInterval, ', alias = ', sensor.alias,
+                ', group = ', sensor.group, ', status = ', sensor.status);
+
+            $('#vs_interval').val(sensor.samplingInterval || 60);
+            $('#vs_alias').val(sensor.alias);
+            $('#vs_group').val(sensor.group).change();
+            $('#vs_status').prop('checked', sensor.status);
+
+            if (sensor.operation == SENSOR_OPR_REGISTER) {
+                registerVirtualSensor(sensor);
+            } else {
+                unregisterVirtualSensor(sensor);
+            }
+
+            $("#vs_opr_left").text(sensor.operation);
+            $('#virtual_sensor_form').modal("show");
             break;
     }
 
 
-    $("#dialog_opr_btn").text(sensor.operation);
-    // $("#show_dialog").trigger("click");
-    $('#myModal').modal("show");
-}
-
-function showInfoWindow() {
-    $("#sensor_info").show();
-    $("#register_sensor").hide();
-    $("#new_sensor").hide();
-}
-
-function showWindow() {
-    switch (operationOption) {
-        case BTN_SHOW_AVAILABLE:
-        case BTN_HIDE_AVAILABLE:
-            $("#sensor_info").hide();
-            $("#register_sensor").show();
-            $("#new_sensor").hide();
-            break;
-        case BTN_ADD_SENSOR:
-            $("#sensor_info").hide();
-            $("#register_sensor").hide();
-            $("#new_sensor").show();
-            break;
-    }
 }
 
 function renderAvailable(data) {
@@ -149,9 +177,9 @@ function renderAvailable(data) {
         marker.setMap(map);
         sensor.marker = marker;
         google.maps.event.addListener(marker, 'click', function () {
-            log('getAvailableSensors(), marker clicked, marker id = ', sensor._id);
+            log('getAvailableSensors(), marker clicked, sensor._id = ', sensor._id);
             sensor.operation = SENSOR_OPR_REGISTER;
-            showSensorInfo(sensor);
+            showSensorForm(sensor);
         });
         map.avaiableSensors[sensor._id.toString()] = sensor;
     });
@@ -198,7 +226,7 @@ function renderRegisteredSensors(data) {
         google.maps.event.addListener(marker, 'click', function () {
             log('getRegisteredSensors(), marker clicked, marker id = ', sensor._id);
             sensor.operation = SENSOR_OPR_UNREGISTER;
-            showSensorInfo(sensor);
+            showSensorForm(sensor);
         });
         map.registered[sensor._id.toString()] = sensor;
     });
@@ -241,7 +269,7 @@ function renderAllSensor(data) {
         google.maps.event.addListener(marker, 'click', function () {
             log('getAllSensors(), marker clicked, marker id = ', sensor._id);
             sensor.operation = SENSOR_OPR_REMOVE;
-            showSensorInfo(sensor);
+            showSensorForm(sensor);
         });
         map.all[sensor._id.toString()] = sensor;
     });
@@ -278,7 +306,10 @@ function addControlButton(type) {
         controlText.style.paddingLeft = '5px';
         controlText.style.paddingRight = '5px';
         controlUI.appendChild(controlText);
+
         controlText.innerHTML = type;
+        operationOption = controlText.innerHTML;
+        log('controlText.innerHTML = ', controlText.innerHTML);
         controlUI.addEventListener('click', function () {
             switch (controlText.innerHTML) {
                 case BTN_SHOW_AVAILABLE:
@@ -290,7 +321,8 @@ function addControlButton(type) {
                     break;
                 case BTN_ADD_SENSOR:
                     operationOption = controlText.innerHTML;
-                    showSensorInfo({operation: SENSOR_OPR_ADD});
+                    log('operationOption = ', operationOption);
+                    showSensorForm({operation: SENSOR_OPR_ADD});
                     break;
             }
         });

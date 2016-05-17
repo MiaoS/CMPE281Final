@@ -1,0 +1,34 @@
+block physical_sensor_form
+#physical_sensor_form.modal.fade(role='dialog')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                button.close(type='button', data-dismiss='modal') ×
+                h4#dialog_title.modal-title Sensor Information
+            .modal-body
+                form(role='form')
+                    .form-group
+                        h3#sensor_id_field.help-block
+                            | Add a new sensor
+                    .form-group
+                        label(for='sensor_name')
+                            | Name
+                        input#sensor_name.form-control(type='text' )
+                    .form-group
+                        label(for='sensor_lat')
+                            | Latitude
+                        input#sensor_lat.form-control(type='text' required)
+
+                    .form-group
+                        label(for='sensor_lng')
+                            | Longtitude
+                        input#sensor_lng.form-control(type='text' required)
+
+                    .form-group
+                        label(for='sensor_station_id')
+                            | station_id
+                        input#sensor_station_id.form-control(type='text' required)
+            .modal-footer
+                button#sensor_opr_left.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")
+                button#sensor_opr_right.btn.btn-primary(type='button', data-dismiss='modal')
+                button.btn.btn-default(type='button', data-dismiss='modal') Close
