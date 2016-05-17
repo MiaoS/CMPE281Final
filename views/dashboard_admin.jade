@@ -2,14 +2,6 @@ extends layout
 
 block head
     script(src='/javascripts/sensor.js')
-
-block error
-    include error_block
-
-block header
-    include nav
-
-block content
     script.
         $(document).ready(function () {
             $('.modal').on('hidden.bs.modal', function () {
@@ -24,12 +16,18 @@ block content
         }
 
         controllerFunction = function ($scope, $http) {
-            //var userName =
-            !{JSON.stringify(userName)};
-            //getResource($scope, $http, '/sensor/all', function (data) {
-            //    $scope.sensors = data;
-            //});
+            $scope.showSensor = function (sid) {
+                window.showSensor(sid);
+            }
         };
+block error
+    include error_block
+
+block header
+    include nav
+
+block content
+
     .container-fluid
         .row
             include sidebar

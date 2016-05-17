@@ -1,7 +1,6 @@
 extends layout
 
 block head
-    //script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAYyOb3EpgM9TA_Pmp2lkWhECQZ1kbgUAM&callback=initMap', async='', defer='')
     script(src='/javascripts/sensor.js')
     script.
         $(document).ready(function () {
@@ -16,10 +15,9 @@ block head
             addControlButton(BTN_SHOW_AVAILABLE);
         }
         controllerFunction = function ($scope, $http) {
-            //var userName = !{JSON.stringify(userName)};
-            //getResource($scope, $http, '/sensor/all', function (data) {
-            //    $scope.sensors = data;
-            //});
+            $scope.showSensor = function (sid) {
+                window.showSensor(sid);
+            }
         };
 block error
     include error_block

@@ -100,7 +100,8 @@ function showSensorInfo(sensor) {
 
 
     $("#dialog_opr_btn").text(sensor.operation);
-    $("#show_dialog").trigger("click");
+    // $("#show_dialog").trigger("click");
+    $('#myModal').modal("show");
 }
 
 function showInfoWindow() {
@@ -128,11 +129,12 @@ function showWindow() {
 function renderAvailable(data) {
     log("renderAvailable(), data.length = ", data.length);
     if (map.avaiableSensors) {
-        map.avaiableSensors.forEach(function (sensor) {
+        for (var sid in map.avaiableSensors) {
+            var sensor = map.avaiableSensors[sid];
             sensor.marker.setMap(null);
-        })
+        }
     }
-    map.avaiableSensors = [];
+    map.avaiableSensors = {};
 
     if (!data || !data.length) {
         return;
@@ -151,9 +153,17 @@ function renderAvailable(data) {
             sensor.operation = SENSOR_OPR_REGISTER;
             showSensorInfo(sensor);
         });
-        map.avaiableSensors.push(sensor);
+        map.avaiableSensors[sensor._id.toString()] = sensor;
     });
 }
+
+function showSensor(sid) {
+    var pool = map.registered || map.all;
+    var sensor = pool[sid];
+    log('sensor = ', sensor);
+    google.maps.event.trigger(sensor.marker, 'click');
+}
+
 function getAvailableSensors() {
     $.get("/virtualSensor/available", function (data) {
         renderAvailable(data);
@@ -165,11 +175,12 @@ function renderRegisteredSensors(data) {
 
     // clear
     if (map.registered) {
-        map.registered.forEach(function (sensor) {
+        for (var sid in map.registered) {
+            var sensor = map.registered[sid];
             sensor.marker.setMap(null);
-        })
+        }
     }
-    map.registered = [];
+    map.registered = {};
 
     if (!data || !data.length) {
         return;
@@ -189,7 +200,7 @@ function renderRegisteredSensors(data) {
             sensor.operation = SENSOR_OPR_UNREGISTER;
             showSensorInfo(sensor);
         });
-        map.registered.push(sensor);
+        map.registered[sensor._id.toString()] = sensor;
     });
 }
 
@@ -208,11 +219,12 @@ function renderAllSensor(data) {
 
     // clear
     if (map.all) {
-        map.all.forEach(function (sensor) {
+        for (var sid in map.all) {
+            var sensor = map.all[sid];
             sensor.marker.setMap(null);
-        })
+        }
     }
-    map.all = [];
+    map.all = {};
 
     if (!data) {
         return;
@@ -231,7 +243,7 @@ function renderAllSensor(data) {
             sensor.operation = SENSOR_OPR_REMOVE;
             showSensorInfo(sensor);
         });
-        map.all.push(sensor);
+        map.all[sensor._id.toString()] = sensor;
     });
 }
 
