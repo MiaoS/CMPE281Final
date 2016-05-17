@@ -1,6 +1,6 @@
 .col-sm-3.col-md-2.sidebar
     ul.nav.nav-sidebar
-        li.active
+        li
             a(href='/dashboard')
                 | Overview
                 span.sr-only (current)
@@ -12,3 +12,7 @@
             a(href='#') Export
         li
             a(href='#') History
+script.
+    $('ul.nav a').filter(function () {
+        return this.href == window.location;
+    }).parent().addClass('active');
