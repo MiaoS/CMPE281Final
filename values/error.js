@@ -23,6 +23,7 @@ var ERROR = {
     INVALID_HASH_TAG: {code: 208, msg: 'Hash tag is required'},
     DUP_SENSOR: {code: 209, msg: 'Sensor exist'},
     FAILED_ADD_SCHEDULE: {code: 210, msg: 'Failed to post schedule'},
+    DUP_GROUP_NAME: {code: 211, msg: 'Group name exists'},
 };
 
 var errorIndex = (function () {

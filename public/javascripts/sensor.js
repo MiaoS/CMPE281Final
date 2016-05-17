@@ -152,6 +152,15 @@ function showSensorForm(sensor) {
     }
 }
 
+function onChangeGroup() {
+    if ($('#vs_group').val().length) {
+        $("#vs_interval").prop('disabled', true);
+        $("#vs_status").prop('disabled', true);
+    } else {
+        $("#vs_interval").prop('disabled', false);
+        $("#vs_status").prop('disabled', false);
+    }
+}
 
 function updateVirtualSensorGroup(group) {
     var vs = {
@@ -291,7 +300,7 @@ function renderRegisteredSensors(data) {
 
 function getRegisteredSensors() {
     $.get("/virtualSensor/my", function (data) {
-        var $scope = angular.element("#list_view").scope();
+        var $scope = angular.element("#iambody").scope();
         $scope.$apply(function () {
             $scope.sensors = data;
         });
@@ -302,7 +311,7 @@ function getRegisteredSensors() {
 function getMyGroups() {
     $.get("/virtualSensorGroup/my", function (data) {
         log('groups = ', data);
-        var $scope = angular.element("#vsg_btn").scope();
+        var $scope = angular.element("#iambody").scope();
         $scope.$apply(function () {
             $scope.groups = data;
         });
@@ -345,7 +354,7 @@ function renderAllSensor(data) {
 
 function getAllSensors() {
     $.get("/sensor", function (data) {
-        var $scope = angular.element("#list_view").scope();
+        var $scope = angular.element("#iambody").scope();
         $scope.$apply(function () {
             $scope.sensors = data;
         });

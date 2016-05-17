@@ -12,6 +12,7 @@ block head
         });
 
         global.initSensor = function () {
+            getMyGroups();
             getRegisteredSensors();
             addControlButton(BTN_SHOW_AVAILABLE);
         }
@@ -27,7 +28,7 @@ block header
     include nav
 
 block content
-
+    #iamsidebar
     .container-fluid
         .row
             include sidebar

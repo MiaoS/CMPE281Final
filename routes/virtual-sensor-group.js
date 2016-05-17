@@ -33,7 +33,7 @@ router.post('/', function (req, res, next) {
             return mongo.get(req.body._id, CONSTANTS.VIRTUAL_SENSOR_GROUP);
         }
         log.v();
-        return [];
+        return mongo.get({name: req.body.name}, CONSTANTS.VIRTUAL_SENSOR_GROUP);
     }).spread(function (vsg) {
         log.v();
         if (!vsg) {
@@ -54,6 +54,7 @@ router.post('/', function (req, res, next) {
         return ERROR.ok(res, this.vsg);
     }).then(function () {
     }).catch(function (err) {
+        log.v(err.stack);
         ERROR.badRequest(res, err);
     });
 });

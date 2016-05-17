@@ -11,22 +11,19 @@ block virtual_sensor_form
                         h3#vs_id_field.help-block
                             | Register sensor
                     .form-group
-                        label(for='vs_interval')
-                            | Sampling interval
-                        input#vs_interval.form-control(type='number' placeholder='minutes' min=30)
-                    .form-group
                         label(for='vs_name')
                             | Name
                         input#vs_name.form-control(type='text')
                     .form-group
                         label(for='vs_group')
                             | Group
-                        select#vs_group.form-control
-                            option(value='one') One
-                            option(value='two') Two
-                            option(value='three') Three
-                            option(value='four') Four
-                            option(value='five') Five
+                        select#vs_group.form-control(onchange='onChangeGroup();return false;')
+                            option(value='')
+                            option(ng-repeat='group in groups' value='{{group._id}}') {{group.name}}
+                    .form-group
+                        label(for='vs_interval')
+                            | Sampling interval
+                        input#vs_interval.form-control(type='number' placeholder='minutes' min=30)
                     .checkbox
                         label
                             input#vs_status(type='checkbox')

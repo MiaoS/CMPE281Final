@@ -7,11 +7,13 @@ block head
             $('.modal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
+            getMyGroups();
             $("#vsg_btn").unbind().click(function () {
                 showGroupForm();
             });
+
         });
-        getMyGroups();
+
 
 
         controllerFunction = function ($scope, $http) {
