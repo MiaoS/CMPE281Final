@@ -14,5 +14,5 @@
             a(href='#') History
 script.
     $('ul.nav a').filter(function () {
-        return this.href == window.location;
+        return window.location.toString().startsWith(this.href);
     }).parent().addClass('active');

@@ -60,7 +60,7 @@ router.post('/', function (req, res, next) {
         } else {
             util.setProperties(vs, req.body);
         }
-        vs.samplingInterval = Math.max(CONSTANTS.MIN_SAMPLING_INTERVAL, vs.samplingInterval || 10);
+        vs.samplingInterval = Math.max(CONSTANTS.MIN_SAMPLING_INTERVAL, vs.samplingInterval || 30);
         log.v('* vs, vs = ', vs);
         return mongo.put(vs, CONSTANTS.VIRTUAL_SENSOR);
     }).then(function (result) {

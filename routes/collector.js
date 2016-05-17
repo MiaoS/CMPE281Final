@@ -129,11 +129,20 @@ function takeASample(vs) {
         data.sid = vs.sid;
         data.vsid = vs._id.toString();
         data.create = Date.now();
+        updateVSHealth(vs, 'alive');
         return mongo.put(data, CONSTANTS.DATA);
     }).catch(function (err) {
-        log.e(err);
+        updateVSHealth(vs, 'dead');
+        // log.e(err);
     });
 }
 
+function updateVSHealth(vs, health) {
+    mongo.get(vs._id, CONSTANTS.VIRTUAL_SENSOR).spread(function (vs) {
+        vs.health = health;
+        return mongo.put(vs, CONSTANTS.VIRTUAL_SENSOR);
+    }).then(function (vs) {
 
+    })
+}
 module.exports = router;

@@ -13,11 +13,11 @@ block virtual_sensor_form
                     .form-group
                         label(for='vs_interval')
                             | Sampling interval
-                        input#vs_interval.form-control(type='number' placeholder='sceonds' min=10)
+                        input#vs_interval.form-control(type='number' placeholder='sceonds' min=30)
                     .form-group
-                        label(for='vs_alias')
+                        label(for='vs_name')
                             | Alias
-                        input#vs_alias.form-control(type='text')
+                        input#vs_name.form-control(type='text')
                     .form-group
                         label(for='vs_group')
                             | Group
@@ -29,7 +29,7 @@ block virtual_sensor_form
                             option(value='five') Five
                     .checkbox
                         label
-                            input#vs_status(type='checkbox', value='true')
+                            input#vs_status(type='checkbox')
                             | status on
             .modal-footer
                 button#vs_opr_left.btn.btn-danger(type='button', data-dismiss='modal' style="float: left;")

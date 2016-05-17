@@ -64,7 +64,7 @@ function updateVirtualSensor(sensor) {
     var vs = {
         sid: sensor.sid || sensor._id,
         samplingInterval: $('#vs_interval').val(),
-        alias: $('#vs_alias').val(),
+        name: $('#vs_name').val(),
         status: $('#vs_status').prop('checked'),
         group: $('#vs_group').val()
     };
@@ -132,13 +132,13 @@ function showSensorForm(sensor) {
         case SENSOR_OPR_REGISTER:
         case SENSOR_OPR_UNREGISTER:
 
-            log('sensor.samplingInterval = ', sensor.samplingInterval, ', alias = ', sensor.alias,
+            log('sensor.samplingInterval = ', sensor.samplingInterval, ', name = ', sensor.name,
                 ', group = ', sensor.group, ', status = ', sensor.status);
 
             $('#vs_interval').val(sensor.samplingInterval || 60);
-            $('#vs_alias').val(sensor.alias);
+            $('#vs_name').val(sensor.name);
             $('#vs_group').val(sensor.group).change();
-            $('#vs_status').prop('checked', sensor.status);
+            $('#vs_status').prop('checked', sensor.status == 'true');
 
             if (sensor.operation == SENSOR_OPR_REGISTER) {
                 registerVirtualSensor(sensor);

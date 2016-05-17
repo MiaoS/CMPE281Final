@@ -23,6 +23,9 @@ block sensor_list
                             thead
                                 tr
                                     th id
+                                    th name
+                                    th status
+                                    th health
                                     th lat
                                     th lng
                                     th opr
@@ -30,6 +33,12 @@ block sensor_list
                                 tr( ng-repeat='sensor in sensors')
                                     td
                                         p {{sensor._id}}
+                                    td
+                                        p {{sensor.name}}
+                                    td
+                                        p {{sensor.status == "true"?"on":"off"}}
+                                    td
+                                        p {{sensor.health?sensor.health:"good"}}
                                     td
                                         p {{sensor.lat||sensor.s.lat}}
                                     td
