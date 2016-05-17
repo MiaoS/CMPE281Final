@@ -5,13 +5,13 @@
                 | Overview
                 span.sr-only (current)
         li
-            a(href='/report') Reports
+            a(href='/sensors') Sensors
         li
-            a(href='#') Analytics
+            a(href='/sensor-groups') Sensor Groups
         li
-            a(href='#') Export
+            a(href='/history') History
         li
-            a(href='#') History
+            a(href='/billing') Billing
 script.
     $('ul.nav a').filter(function () {
         return window.location.toString().startsWith(this.href);

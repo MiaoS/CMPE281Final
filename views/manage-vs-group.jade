@@ -1,0 +1,89 @@
+extends layout
+
+block head
+    script(src='/javascripts/sensor.js')
+    script.
+        $(document).ready(function () {
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+            $("#vsg_btn").unbind().click(function () {
+                showGroupForm();
+            });
+        });
+        getMyGroups();
+
+
+        controllerFunction = function ($scope, $http) {
+            $scope.showGroup = function (group) {
+                window.showGroup(group);
+            }
+        };
+block error
+    include error_block
+
+block header
+    include nav
+
+block content
+
+    .container-fluid
+        .row
+            include sidebar
+            include virtual_sensor_group_form
+            .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+                button#vsg_btn.btn.btn-primary.btn-lg(type='button', data-toggle='modal') New Group
+                .table-responsive
+                    table.table.table-striped(style='display: inline')
+                        thead
+                            tr
+                                th Group Name
+                                th
+                                    | Data Collector
+                                    br
+                                    |  Interval(min)
+                                th Status
+                        tbody
+                            tr(ng-repeat='group in groups' )
+                                td
+                                    a(href='', ng-click='showGroup(group);') {{group.name}}
+                                td
+                                    p {{group.samplingInterval}}
+                                td
+                                    p {{group.status == 'true'?'on':'off'}}
+                    table.table.table-striped(style='display: inline;margin-left: 80px')
+                        thead
+                            tr
+                                th Sensor ID
+                                th Sensor Alias
+                        tbody
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+                            tr
+                                td
+                                td
+
+
+

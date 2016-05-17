@@ -55,12 +55,15 @@ auth.init(passport);
 
 app.use('/', require('./routes/index')(passport));
 app.use('/admin', require('./routes/admin')(passport));
-app.use('/report', require('./routes/report'));
+app.use('/history', require('./routes/report'));
+app.use('/sensors', require('./routes/manage-sensors'));
+app.use('/sensor-groups', require('./routes/manage-sensor-groups'));
 app.use('/user', require('./routes/user'));
 
 app.use('/sensor', require('./routes/sensor'));
 app.use('/data', require('./routes/data'));
 app.use('/virtualSensor', require('./routes/virtual-sensor'));
+app.use('/virtualSensorGroup', require('./routes/virtual-sensor-group'));
 app.use('/collector', require('./routes/collector'));
 
 // catch 404 and forward to error handler

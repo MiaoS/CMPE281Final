@@ -150,8 +150,62 @@ function showSensorForm(sensor) {
             $('#virtual_sensor_form').modal("show");
             break;
     }
+}
 
 
+function updateVirtualSensorGroup(group) {
+    var vs = {
+        samplingInterval: $('#vsg_interval').val(),
+        name: $('#vsg_name').val(),
+        status: $('#vsg_status').prop('checked'),
+    };
+    if (group) {
+        vs._id = group._id;
+    }
+    $.post("/virtualSensorGroup", vs, function () {
+        window.location.reload();
+    }).done(function () {
+    }).fail(function () {
+        vex.dialog.alert('Operation failed!');
+    }).always(function () {
+    });
+}
+
+function showGroupForm(group) {
+    log('group = ', group);
+
+    if (group) {
+        $('#vsg_name').val(group.name);
+        $('#vsg_interval').val(group.samplingInterval || 60);
+        $('#vsg_status').prop('checked', group.status == 'true');
+
+        $("#vsg_opr_left").text('Remove');
+        $("#vsg_opr_left").unbind().click(function () {
+            $.ajax({
+                url: "/virtualSensorGroup/" + group._id,
+                type: 'DELETE',
+                success: function (data) {
+                    window.location.reload();
+                }
+            }).fail(function () {
+                vex.dialog.alert('Remove failed!');
+            });
+        });
+
+        $("#vsg_opr_right").show();
+        $("#vsg_opr_right").text('Update');
+        $("#vsg_opr_right").unbind().click(function () {
+            updateVirtualSensorGroup(group);
+        });
+    } else {
+        $("#vsg_id_field").text('Greate Group');
+        $("#vsg_opr_left").text('Create');
+        $("#vsg_opr_left").unbind().click(function () {
+            updateVirtualSensorGroup();
+        });
+        $("#vsg_opr_right").hide();
+    }
+    $('#virtual_sensor_group_form').modal("show");
 }
 
 function renderAvailable(data) {
@@ -190,6 +244,9 @@ function showSensor(sid) {
     var sensor = pool[sid];
     log('sensor = ', sensor);
     google.maps.event.trigger(sensor.marker, 'click');
+}
+function showGroup(group) {
+    showGroupForm(group);
 }
 
 function getAvailableSensors() {
@@ -240,6 +297,17 @@ function getRegisteredSensors() {
         });
         renderRegisteredSensors(data);
     });
+}
+
+function getMyGroups() {
+    $.get("/virtualSensorGroup/my", function (data) {
+        log('groups = ', data);
+        var $scope = angular.element("#vsg_btn").scope();
+        $scope.$apply(function () {
+            $scope.groups = data;
+        });
+    });
+
 }
 
 function renderAllSensor(data) {
