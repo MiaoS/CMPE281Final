@@ -110,7 +110,7 @@ function unregisterVirtualSensor(sensor) {
     $("#vs_opr_right").show();
     $("#vs_opr_right").text('Details');
     $("#vs_opr_right").unbind().click(function (data) {
-        window.location.href = "/report/vsid/" + sensor._id;
+        window.location.href = "/history/vsid/" + sensor._id;
     });
 }
 
