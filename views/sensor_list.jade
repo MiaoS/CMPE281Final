@@ -24,7 +24,7 @@ block sensor_list
                                 tr
                                     th id
                                     th name
-                                    th status
+                                    th(ng-if='sensor.status')  status
                                     th health
                                     th lat
                                     th lng
@@ -35,7 +35,7 @@ block sensor_list
                                         p {{sensor._id}}
                                     td
                                         p {{sensor.name}}
-                                    td
+                                    td(ng-if='sensor.status')
                                         p {{sensor.status == "true"?"on":"off"}}
                                     td
                                         p {{sensor.health?sensor.health:"good"}}

@@ -8,7 +8,7 @@ var isAuthenticated = function (req, res, next) {
 };
 
 router.get('/', isAuthenticated, function (req, res) {
-    res.render('manage-vs.jade', {user: req.user});
+    res.render('billing.jade', {user: req.user});
 });
 
 module.exports = router;

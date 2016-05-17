@@ -44,10 +44,10 @@ module.exports = function (passport) {
         failureFlash: true
     }));
 
-    /* GET Home Page */
-    router.get('/dashboard', isAuthenticated, function (req, res) {
-        res.render('dashboard.jade', {user: req.user});
-    });
+    // /* GET Home Page */
+    // router.get('/dashboard', isAuthenticated, function (req, res) {
+    //     res.render('dashboard.jade', {user: req.user});
+    // });
 
     /* GET setting Page */
     router.get('/setting', isAuthenticated, function (req, res) {

@@ -8,6 +8,7 @@ var BTN_SHOW_AVAILABLE = 'Show Available';
 var BTN_HIDE_AVAILABLE = 'Hide Available';
 var BTN_ADD_SENSOR = 'Add New';
 var operationOption;
+var map;
 
 function doUpdateSensor(sensor) {
     var form = {
@@ -300,11 +301,14 @@ function renderRegisteredSensors(data) {
 
 function getRegisteredSensors() {
     $.get("/virtualSensor/my", function (data) {
+        log('registered, data = ', data);
         var $scope = angular.element("#iambody").scope();
         $scope.$apply(function () {
             $scope.sensors = data;
         });
-        renderRegisteredSensors(data);
+        if(map){
+            renderRegisteredSensors(data);
+        }
     });
 }
 

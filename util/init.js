@@ -131,7 +131,7 @@ function doInit() {
             method: 'post',
             json: json
         }).then(function (body) {
-            log.v(body);
+            // log.v(body);
             assertProperties(body, json);
             return util.objectify(body);
         }).catch(function (err) {
@@ -254,13 +254,13 @@ function doInit() {
 
     function importSensors() {
         var stationList = require('../values/station-list.json');
-        log.v('stations.length = ', stationList.stations.length);
+        // log.v('stations.length = ', stationList.stations.length);
         return Promise.each(stationList.stations, function (stationId) {
             return rp({
                 uri: 'http://localhost:' + CONST.PORT_COLLECTOR + '/collector/station/' + stationId,
                 method: 'get',
             }).then(function (data) {
-                log.v('importSensors, data = ', data);
+                // log.v('importSensors, data = ', data);
                 data = util.objectify(data);
                 if (data) {
                     return post('/sensor', {stationId: data.stationId, lat: data.lat, lng: data.lng});

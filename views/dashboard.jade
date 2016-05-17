@@ -2,6 +2,9 @@ extends layout
 
 block head
     script(src='/javascripts/sensor.js')
+    script(src='js/dashboardData.js')
+    script(src='js/Chart.js')
+
     script.
         $(document).ready(function () {
             $('.modal').on('hidden.bs.modal', function () {
@@ -9,13 +12,9 @@ block head
             });
             $('#panel_title').text('Manage sensors');
             $('#show_list').text('My Sensor List');
+            getRegisteredSensors();
         });
 
-        global.initSensor = function () {
-            getMyGroups();
-            getRegisteredSensors();
-            addControlButton(BTN_SHOW_AVAILABLE);
-        }
         controllerFunction = function ($scope, $http) {
             $scope.showSensor = function (sid) {
                 window.showSensor(sid);
@@ -28,31 +27,56 @@ block header
     include nav
 
 block content
-    #iamsidebar
     .container-fluid
         .row
             include sidebar
             .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-                h1.page-header Dashboard{{test}}
-                //.row.placeholders
-                    .col-xs-6.col-sm-3.placeholder
-                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
-                        h4 Label
-                        span.text-muted Something else
-                    .col-xs-6.col-sm-3.placeholder
-                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
-                        h4 Label
-                        span.text-muted Something else
-                    .col-xs-6.col-sm-3.placeholder
-                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
-                        h4 Label
-                        span.text-muted Something else
-                    .col-xs-6.col-sm-3.placeholder
-                        img.img-responsive(src='data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==', width='200', height='200', alt='Generic placeholder thumbnail')
-                        h4 Label
-                        span.text-muted Something else
-                //h2.sub-header Section title
-                #panel-528.tab-pane.active
-                    include sensor_list
-
+                h1.page-header Dashboard
+                .row.placeholders
+                    .col-md-12.col-xs-12.col-sm-12(style='text-align:left;')
+                        h3
+                            | Sensor:
+                            span#sensorId
+                            span    Location:
+                            span#latitude
+                            span#longitude
+                    .col-md-8.col-xs-8.col-sm-8
+                        h4 Wave Height (m) for past 12 hours
+                        canvas#chart(height='300', width='600')
+                    .col-xs-4.col-sm-4(class='.col-md-4', style='text-align:center;')
+                        h4
+                            | Current Wave Height & Direction:
+                            br
+                            span#cur_height
+                            span#cur_direction
+                        div(style='margin-top:20px;')
+                            canvas#compass.compass(width='150', height='150')
+                h3.sub-header My Sensors
+                #list_view.tab-pane.fade
+                    table.table
+                        thead
+                            tr
+                                th id
+                                th name
+                                th status
+                                th health
+                                th lat
+                                th lng
+                                //th opr
+                        tbody
+                            tr( ng-repeat='sensor in sensors')
+                                td
+                                    p {{sensor._id}}
+                                td
+                                    p {{sensor.name}}
+                                td
+                                    p {{sensor.status == "true"?"on":"off"}}
+                                td
+                                    p {{sensor.health?sensor.health:"good"}}
+                                td
+                                    p {{sensor.lat||sensor.s.lat}}
+                                td
+                                    p {{sensor.lng||sensor.s.lng}}
+                                //td
+                                    input.btn.btn-success(type='submit', value='Modify', ng-click='showSensor(sensor._id);')
 
